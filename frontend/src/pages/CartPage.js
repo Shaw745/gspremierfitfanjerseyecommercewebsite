@@ -43,7 +43,7 @@ const CartPage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <Navbar />
         <div className="pt-32 pb-24 px-6 md:px-12">
           <div className="max-w-[1400px] mx-auto text-center">
@@ -73,7 +73,7 @@ const CartPage = () => {
 
   if (cart.items.length === 0) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <Navbar />
         <div className="pt-32 pb-24 px-6 md:px-12">
           <div className="max-w-[1400px] mx-auto text-center">
@@ -102,7 +102,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <Navbar />
 
       {/* Hero */}

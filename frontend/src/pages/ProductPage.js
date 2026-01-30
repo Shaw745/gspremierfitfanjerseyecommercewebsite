@@ -216,7 +216,7 @@ const ProductPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <Navbar />
         <div className="pt-24 px-6 md:px-12">
           <div className="max-w-[1400px] mx-auto">
@@ -238,7 +238,7 @@ const ProductPage = () => {
   if (!product) return null;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <Navbar />
 
       {/* Breadcrumb */}

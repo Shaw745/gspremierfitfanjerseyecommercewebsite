@@ -182,7 +182,7 @@ const CheckoutPage = () => {
 
   if (loading && !orderResult) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <Navbar />
         <div className="pt-32 pb-24 px-6 md:px-12 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin" />
@@ -192,7 +192,7 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <Navbar />
 
       {/* Hero */}
