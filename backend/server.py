@@ -976,6 +976,128 @@ async def update_theme_settings(theme: ThemeSettings, admin: dict = Depends(get_
     )
     return {"message": "Theme updated"}
 
+# ==================== REVIEWS & RATINGS ====================
+
+@api_router.post("/products/{product_id}/reviews")
+async def create_review(product_id: str, review: ReviewCreate, current_user: dict = Depends(get_current_user)):
+    product = await db.products.find_one({"id": product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Check if user already reviewed this product
+    existing = await db.reviews.find_one({"product_id": product_id, "user_id": current_user["id"]})
+    if existing:
+        raise HTTPException(status_code=400, detail="You have already reviewed this product")
+    
+    review_id = str(uuid.uuid4())
+    review_data = {
+        "id": review_id,
+        "product_id": product_id,
+        "user_id": current_user["id"],
+        "user_name": current_user["full_name"],
+        "rating": review.rating,
+        "title": review.title,
+        "comment": review.comment,
+        "verified_purchase": False,  # Could check order history
+        "helpful_count": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Check if user purchased this product
+    user_orders = await db.orders.find({"user_id": current_user["id"], "payment_status": "paid"}).to_list(100)
+    for order in user_orders:
+        for item in order.get("items", []):
+            if item.get("product_id") == product_id:
+                review_data["verified_purchase"] = True
+                break
+    
+    await db.reviews.insert_one(review_data)
+    
+    # Update product average rating
+    await update_product_rating(product_id)
+    
+    return {"id": review_id, "message": "Review submitted successfully"}
+
+@api_router.get("/products/{product_id}/reviews")
+async def get_product_reviews(product_id: str, limit: int = 20, skip: int = 0):
+    reviews = await db.reviews.find(
+        {"product_id": product_id},
+        {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    total = await db.reviews.count_documents({"product_id": product_id})
+    
+    # Get rating distribution
+    pipeline = [
+        {"$match": {"product_id": product_id}},
+        {"$group": {"_id": "$rating", "count": {"$sum": 1}}}
+    ]
+    distribution_result = await db.reviews.aggregate(pipeline).to_list(5)
+    distribution = {str(i): 0 for i in range(1, 6)}
+    for d in distribution_result:
+        distribution[str(d["_id"])] = d["count"]
+    
+    # Get average rating
+    avg_pipeline = [
+        {"$match": {"product_id": product_id}},
+        {"$group": {"_id": None, "avg": {"$avg": "$rating"}}}
+    ]
+    avg_result = await db.reviews.aggregate(avg_pipeline).to_list(1)
+    avg_rating = round(avg_result[0]["avg"], 1) if avg_result else 0
+    
+    return {
+        "reviews": reviews,
+        "total": total,
+        "average_rating": avg_rating,
+        "distribution": distribution
+    }
+
+@api_router.post("/reviews/{review_id}/helpful")
+async def mark_review_helpful(review_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.reviews.update_one(
+        {"id": review_id},
+        {"$inc": {"helpful_count": 1}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return {"message": "Marked as helpful"}
+
+async def update_product_rating(product_id: str):
+    """Update product's average rating"""
+    pipeline = [
+        {"$match": {"product_id": product_id}},
+        {"$group": {"_id": None, "avg": {"$avg": "$rating"}, "count": {"$sum": 1}}}
+    ]
+    result = await db.reviews.aggregate(pipeline).to_list(1)
+    if result:
+        await db.products.update_one(
+            {"id": product_id},
+            {"$set": {
+                "average_rating": round(result[0]["avg"], 1),
+                "review_count": result[0]["count"]
+            }}
+        )
+
+# ==================== INVENTORY ALERTS ====================
+
+@api_router.get("/admin/inventory/low-stock")
+async def get_low_stock_products(admin: dict = Depends(get_admin_user)):
+    products = await db.products.find(
+        {"stock": {"$lte": LOW_STOCK_THRESHOLD}},
+        {"_id": 0}
+    ).sort("stock", 1).to_list(50)
+    return {"products": products, "threshold": LOW_STOCK_THRESHOLD}
+
+@api_router.put("/admin/inventory/{product_id}")
+async def update_inventory(product_id: str, stock: int, admin: dict = Depends(get_admin_user)):
+    result = await db.products.update_one(
+        {"id": product_id},
+        {"$set": {"stock": stock, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {"message": "Inventory updated"}
+
 # ==================== CATEGORIES & SPORTS ====================
 
 @api_router.get("/categories")
