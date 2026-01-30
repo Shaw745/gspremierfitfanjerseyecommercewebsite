@@ -632,6 +632,59 @@ const ProductPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Write Review Modal */}
+      <Dialog open={reviewModalOpen} onOpenChange={setReviewModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">WRITE A REVIEW</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmitReview} className="space-y-4 mt-4">
+            <div>
+              <Label>Rating</Label>
+              <div className="mt-2">
+                <StarRating 
+                  rating={newReview.rating} 
+                  onRate={(rating) => setNewReview({ ...newReview, rating })}
+                  interactive 
+                  size="lg"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="review-title">Title</Label>
+              <Input
+                id="review-title"
+                value={newReview.title}
+                onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
+                placeholder="Summarize your review"
+                required
+                data-testid="review-title-input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="review-comment">Review</Label>
+              <Textarea
+                id="review-comment"
+                value={newReview.comment}
+                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                placeholder="Share your experience with this product"
+                required
+                rows={4}
+                data-testid="review-comment-input"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full bg-[#050505] hover:bg-[#1a1a1a] text-white"
+              disabled={submittingReview}
+              data-testid="submit-review-btn"
+            >
+              {submittingReview ? 'Submitting...' : 'Submit Review'}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
