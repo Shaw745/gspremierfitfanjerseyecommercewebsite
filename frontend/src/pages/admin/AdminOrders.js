@@ -213,7 +213,16 @@ const AdminOrders = () => {
                     {formatDate(order.created_at)}
                   </td>
                   <td className="p-4">
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openTrackingModal(order)}
+                        data-testid={`tracking-order-${order.id}`}
+                      >
+                        <Truck className="w-4 h-4 mr-1" />
+                        Tracking
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"
@@ -231,6 +240,75 @@ const AdminOrders = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Tracking Modal */}
+      <Dialog open={trackingModalOpen} onOpenChange={setTrackingModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Truck className="w-5 h-5" />
+              Update Tracking - {selectedOrder?.reference}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdateWithTracking} className="space-y-4 mt-4">
+            <div>
+              <Label>Status</Label>
+              <Select
+                value={trackingForm.status}
+                onValueChange={(value) => setTrackingForm({ ...trackingForm, status: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Carrier</Label>
+              <Input
+                value={trackingForm.carrier}
+                onChange={(e) => setTrackingForm({ ...trackingForm, carrier: e.target.value })}
+                placeholder="e.g., DHL, FedEx, GIG Logistics"
+              />
+            </div>
+            <div>
+              <Label>Tracking Number</Label>
+              <Input
+                value={trackingForm.tracking_number}
+                onChange={(e) => setTrackingForm({ ...trackingForm, tracking_number: e.target.value })}
+                placeholder="Enter tracking number"
+              />
+            </div>
+            <div>
+              <Label>Tracking URL</Label>
+              <Input
+                value={trackingForm.tracking_url}
+                onChange={(e) => setTrackingForm({ ...trackingForm, tracking_url: e.target.value })}
+                placeholder="https://tracking.example.com/..."
+              />
+            </div>
+            <div>
+              <Label>Notes</Label>
+              <Input
+                value={trackingForm.notes}
+                onChange={(e) => setTrackingForm({ ...trackingForm, notes: e.target.value })}
+                placeholder="Optional notes for customer"
+              />
+            </div>
+            <Button type="submit" className="w-full bg-[#050505] hover:bg-[#1a1a1a] text-white">
+              Update Order
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
