@@ -251,9 +251,9 @@ const ShopPage = () => {
       </section>
 
       {/* Shop Content */}
-      <section className="py-12 px-6 md:px-12">
+      <section className="py-12 px-4 md:px-12">
         <div className="max-w-[1400px] mx-auto">
-          <div className="flex gap-12">
+          <div className="flex gap-6 lg:gap-12">
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
               <FilterSidebar />
