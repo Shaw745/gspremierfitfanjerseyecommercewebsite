@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Eye, ChevronDown } from 'lucide-react';
+import { Search, Eye, Truck, Package } from 'lucide-react';
 import axios from 'axios';
 import AdminLayout from '../../components/AdminLayout';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { Badge } from '../../components/ui/badge';
 import {
   Dialog,
@@ -27,6 +28,14 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [trackingModalOpen, setTrackingModalOpen] = useState(false);
+  const [trackingForm, setTrackingForm] = useState({
+    status: '',
+    tracking_number: '',
+    tracking_url: '',
+    carrier: '',
+    notes: ''
+  });
 
   useEffect(() => {
     fetchOrders();
@@ -43,6 +52,30 @@ const AdminOrders = () => {
       console.error('Failed to fetch orders:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openTrackingModal = (order) => {
+    setSelectedOrder(order);
+    setTrackingForm({
+      status: order.status,
+      tracking_number: order.tracking_number || '',
+      tracking_url: order.tracking_url || '',
+      carrier: order.carrier || '',
+      notes: ''
+    });
+    setTrackingModalOpen(true);
+  };
+
+  const handleUpdateWithTracking = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`${API_URL}/admin/orders/${selectedOrder.id}`, trackingForm);
+      toast.success('Order updated with tracking info');
+      setTrackingModalOpen(false);
+      fetchOrders();
+    } catch (error) {
+      toast.error('Failed to update order');
     }
   };
 
