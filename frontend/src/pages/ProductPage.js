@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Heart, Share2, Truck, Shield, RefreshCw, Minus, Plus, Check } from 'lucide-react';
+import { Heart, Share2, Truck, Shield, RefreshCw, Minus, Plus, Check, Star, ThumbsUp } from 'lucide-react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Textarea } from '../components/ui/textarea';
+import { Label } from '../components/ui/label';
+import { Progress } from '../components/ui/progress';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
-import { API_URL, formatPrice } from '../lib/utils';
+import { API_URL, formatPrice, formatDate } from '../lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +37,27 @@ const sizeGuide = {
   'XXL': { chest: '112-117', waist: '96-101', hip: '112-117' },
 };
 
+const StarRating = ({ rating, onRate, interactive = false, size = 'md' }) => {
+  const sizeClasses = size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type={interactive ? "button" : undefined}
+          onClick={() => interactive && onRate && onRate(star)}
+          className={interactive ? 'cursor-pointer' : 'cursor-default'}
+          disabled={!interactive}
+        >
+          <Star
+            className={`${sizeClasses} ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-neutral-300'}`}
+          />
+        </button>
+      ))}
+    </div>
+  );
+};
+
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -48,6 +73,13 @@ const ProductPage = () => {
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const [inWishlist, setInWishlist] = useState(false);
+  
+  // Reviews state
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ average_rating: 0, total: 0, distribution: {} });
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [newReview, setNewReview] = useState({ rating: 5, title: '', comment: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     fetchProduct();
