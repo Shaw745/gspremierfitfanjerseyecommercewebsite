@@ -229,11 +229,11 @@ const ShopPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <Navbar />
 
       {/* Hero */}
-      <section className="pt-32 pb-12 px-6 md:px-12 bg-[#050505]" data-testid="shop-hero">
+      <section className="pt-32 pb-12 px-4 md:px-12 bg-[#050505]" data-testid="shop-hero">
         <div className="max-w-[1400px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
