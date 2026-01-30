@@ -108,6 +108,11 @@ const HomePage = () => {
     fetchFeaturedProducts();
   }, []);
 
+  const handleMouseMove = (e) => {
+    // Optional: Add mouse tracking functionality for hero section
+    // This can be used for parallax effects or interactive elements
+  };
+
   const fetchFeaturedProducts = async () => {
     try {
       const response = await axios.get(`${API_URL}/products?featured=true&limit=4`);
