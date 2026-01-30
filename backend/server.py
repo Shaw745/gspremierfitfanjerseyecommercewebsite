@@ -163,6 +163,186 @@ class ThemeSettings(BaseModel):
     accent_color: str = "#CCFF00"
     secondary_color: str = "#FFFFFF"
 
+class ReviewCreate(BaseModel):
+    product_id: str
+    rating: int = Field(..., ge=1, le=5)
+    title: str
+    comment: str
+
+class OrderStatusUpdate(BaseModel):
+    status: str
+    tracking_number: Optional[str] = None
+    tracking_url: Optional[str] = None
+    carrier: Optional[str] = None
+    notes: Optional[str] = None
+
+class TrackingUpdate(BaseModel):
+    status: str
+    location: Optional[str] = None
+    description: str
+
+# ==================== EMAIL HELPERS ====================
+
+async def send_order_confirmation_email(order: dict, user_email: str):
+    """Send order confirmation email to customer"""
+    if not RESEND_API_KEY:
+        logger.warning("Resend API key not configured, skipping email")
+        return
+    
+    items_html = ""
+    for item in order.get("items", []):
+        items_html += f"""
+        <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('product_name', 'Product')}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('size', '-')} / {item.get('color', '-')}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('quantity', 1)}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">₦{item.get('item_total', 0):,.0f}</td>
+        </tr>
+        """
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff;">
+        <div style="background: #050505; padding: 30px; text-align: center;">
+            <h1 style="color: #CCFF00; margin: 0; font-size: 24px;">GS PREMIER FIT FAN</h1>
+        </div>
+        <div style="padding: 30px;">
+            <h2 style="color: #050505; margin-bottom: 20px;">Order Confirmation</h2>
+            <p style="color: #666;">Thank you for your order! Here are your order details:</p>
+            
+            <div style="background: #f9f9f9; padding: 15px; margin: 20px 0; border-left: 4px solid #CCFF00;">
+                <p style="margin: 0;"><strong>Order Reference:</strong> {order.get('reference', 'N/A')}</p>
+                <p style="margin: 5px 0 0;"><strong>Status:</strong> {order.get('status', 'pending').upper()}</p>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <thead>
+                    <tr style="background: #050505; color: #fff;">
+                        <th style="padding: 10px; text-align: left;">Product</th>
+                        <th style="padding: 10px; text-align: left;">Size/Color</th>
+                        <th style="padding: 10px; text-align: left;">Qty</th>
+                        <th style="padding: 10px; text-align: left;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items_html}
+                </tbody>
+            </table>
+            
+            <div style="text-align: right; margin-top: 20px; padding-top: 20px; border-top: 2px solid #050505;">
+                <p style="font-size: 20px; font-weight: bold; color: #050505;">Total: ₦{order.get('total', 0):,.0f}</p>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #f9f9f9;">
+                <h3 style="margin-top: 0; color: #050505;">Shipping Address</h3>
+                <p style="margin: 0; color: #666;">
+                    {order.get('shipping_address', {}).get('full_name', '')}<br>
+                    {order.get('shipping_address', {}).get('address', '')}<br>
+                    {order.get('shipping_address', {}).get('city', '')}, {order.get('shipping_address', {}).get('state', '')}<br>
+                    {order.get('shipping_address', {}).get('country', 'Nigeria')}
+                </p>
+            </div>
+        </div>
+        <div style="background: #050505; padding: 20px; text-align: center;">
+            <p style="color: #999; margin: 0; font-size: 12px;">© 2024 Gs Premier Fit Fan. All rights reserved.</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [user_email],
+            "subject": f"Order Confirmed - {order.get('reference', 'N/A')}",
+            "html": html_content
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Order confirmation email sent to {user_email}")
+    except Exception as e:
+        logger.error(f"Failed to send order email: {str(e)}")
+
+async def send_shipping_update_email(order: dict, user_email: str, tracking_info: dict):
+    """Send shipping update email to customer"""
+    if not RESEND_API_KEY:
+        return
+    
+    tracking_html = ""
+    if tracking_info.get("tracking_number"):
+        tracking_html = f"""
+        <div style="background: #CCFF00; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold; color: #050505;">Tracking Number: {tracking_info.get('tracking_number')}</p>
+            <p style="margin: 5px 0 0; color: #050505;">Carrier: {tracking_info.get('carrier', 'N/A')}</p>
+            {"<a href='" + tracking_info.get('tracking_url') + "' style='color: #050505;'>Track Your Package</a>" if tracking_info.get('tracking_url') else ""}
+        </div>
+        """
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: #050505; padding: 30px; text-align: center;">
+            <h1 style="color: #CCFF00; margin: 0;">GS PREMIER FIT FAN</h1>
+        </div>
+        <div style="padding: 30px;">
+            <h2 style="color: #050505;">Shipping Update</h2>
+            <p>Your order <strong>{order.get('reference')}</strong> status has been updated to: <strong>{order.get('status', '').upper()}</strong></p>
+            {tracking_html}
+            <p style="color: #666;">If you have any questions, please contact our support team.</p>
+        </div>
+        <div style="background: #050505; padding: 20px; text-align: center;">
+            <p style="color: #999; margin: 0; font-size: 12px;">© 2024 Gs Premier Fit Fan</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [user_email],
+            "subject": f"Shipping Update - Order {order.get('reference')}",
+            "html": html_content
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Shipping update email sent to {user_email}")
+    except Exception as e:
+        logger.error(f"Failed to send shipping email: {str(e)}")
+
+async def send_low_stock_alert(product: dict):
+    """Send low stock alert to admin"""
+    if not RESEND_API_KEY:
+        return
+    
+    admin = await db.users.find_one({"is_admin": True}, {"_id": 0})
+    if not admin:
+        return
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: #ef4444; padding: 20px; text-align: center;">
+            <h1 style="color: #fff; margin: 0;">⚠️ LOW STOCK ALERT</h1>
+        </div>
+        <div style="padding: 30px;">
+            <h2 style="color: #050505;">{product.get('name')}</h2>
+            <p style="font-size: 24px; color: #ef4444; font-weight: bold;">Only {product.get('stock')} items remaining!</p>
+            <p style="color: #666;">Please restock this product soon to avoid stockouts.</p>
+            <div style="background: #f9f9f9; padding: 15px; margin: 20px 0;">
+                <p style="margin: 0;"><strong>Product ID:</strong> {product.get('id')}</p>
+                <p style="margin: 5px 0 0;"><strong>Category:</strong> {product.get('category')}</p>
+                <p style="margin: 5px 0 0;"><strong>Sport:</strong> {product.get('sport')}</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [admin.get("email")],
+            "subject": f"Low Stock Alert - {product.get('name')}",
+            "html": html_content
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Low stock alert sent for {product.get('name')}")
+    except Exception as e:
+        logger.error(f"Failed to send low stock alert: {str(e)}")
+
 # ==================== AUTH HELPERS ====================
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
