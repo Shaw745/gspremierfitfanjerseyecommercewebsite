@@ -320,8 +320,8 @@ const HomePage = () => {
             >
               <div className="aspect-[4/5] overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80"
-                  alt="Athlete"
+                  src="https://customer-assets.emergentagent.com/job_kit-masters-3/artifacts/no6664tf_image.png"
+                  alt="Zidane Jersey"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
