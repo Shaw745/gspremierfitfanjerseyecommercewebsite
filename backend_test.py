@@ -450,7 +450,7 @@ def main():
         
         # Product tests
         ("Get Products", tester.test_get_products),
-        ("Get Featured Products", tester.test_featured_products),
+        ("Get Featured Products", tester.test_get_featured_products),
         ("Get Product by ID", tester.test_get_product_by_id),
         ("Get Categories", tester.test_categories),
         ("Get Sports", tester.test_sports),
