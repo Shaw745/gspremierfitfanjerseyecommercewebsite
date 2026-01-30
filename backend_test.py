@@ -452,9 +452,9 @@ def main():
         ("Get Products", tester.test_get_products),
         ("Get Featured Products", tester.test_get_featured_products),
         ("Get Product by ID", tester.test_get_product_by_id),
-        ("Get Categories", tester.test_categories),
-        ("Get Sports", tester.test_sports),
-        ("Get Collections", tester.test_collections),
+        ("Get Categories", tester.test_get_categories),
+        ("Get Sports", tester.test_get_sports),
+        ("Get Collections", tester.test_get_collections),
         
         # Cart and Wishlist tests
         ("Add to Cart", tester.test_add_to_cart),
