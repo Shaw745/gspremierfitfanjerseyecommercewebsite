@@ -19,15 +19,15 @@ const Footer = () => {
                 Subscribe for exclusive drops, early access, and more.
               </p>
             </div>
-            <div className="flex w-full md:w-auto gap-2">
+            <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="bg-neutral-900 border-neutral-800 text-white placeholder:text-neutral-500 min-w-[280px]"
+                className="bg-neutral-900 border-neutral-800 text-white placeholder:text-neutral-500 w-full sm:min-w-[280px]"
                 data-testid="newsletter-email-input"
               />
               <Button
-                className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-6"
+                className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-6 whitespace-nowrap"
                 data-testid="newsletter-submit-btn"
               >
                 Subscribe
