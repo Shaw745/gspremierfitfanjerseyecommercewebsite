@@ -532,6 +532,12 @@ def main():
         ("Admin Get Customers", tester.test_admin_get_customers),
         ("Admin Create Product", tester.test_admin_create_product),
         ("Admin Theme Settings", tester.test_admin_theme_settings),
+        
+        # Reviews tests
+        ("Product Reviews", tester.test_product_reviews),
+        
+        # Order tracking tests
+        ("Admin Update Order Tracking", tester.test_admin_update_order_tracking),
     ]
     
     # Run all tests
