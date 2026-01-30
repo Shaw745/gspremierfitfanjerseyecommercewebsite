@@ -149,15 +149,15 @@ const HomePage = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/95 to-[#050505]/80" />
         </div>
 
-        {/* Main Content Grid */}
+        {/* Main Content */}
         <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 py-12 md:py-0">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[calc(100vh-80px)]">
-            {/* Left - Text Content */}
+          <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+            {/* Center - Text Content */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="order-2 lg:order-1"
+              className="text-center max-w-3xl"
             >
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
