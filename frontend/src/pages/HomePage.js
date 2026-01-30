@@ -103,8 +103,6 @@ const StatsSection = () => {
 
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const jerseyRef = useRef(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -117,15 +115,6 @@ const HomePage = () => {
     } catch (error) {
       console.error('Failed to fetch products:', error);
     }
-  };
-
-  // 3D Jersey Mouse Effect
-  const handleMouseMove = (e) => {
-    if (!jerseyRef.current) return;
-    const rect = jerseyRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) / 30;
-    const y = (e.clientY - rect.top - rect.height / 2) / 30;
-    setMousePosition({ x, y });
   };
 
   return (
