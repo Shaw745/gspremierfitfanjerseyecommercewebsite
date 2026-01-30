@@ -171,17 +171,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Marquee Section */}
-      <section className="bg-[#CCFF00] py-4 overflow-hidden">
-        <div className="animate-marquee whitespace-nowrap flex">
-          {[...Array(10)].map((_, i) => (
-            <span key={i} className="text-[#050505] text-xl md:text-2xl font-black tracking-tighter mx-8">
-              PERFORMANCE • PRECISION • POWER • PREMIUM •
-            </span>
-          ))}
-        </div>
-      </section>
-
       {/* Featured Products */}
       <section className="py-24 md:py-32 px-6 md:px-12" data-testid="featured-products-section">
         <div className="max-w-[1400px] mx-auto">
