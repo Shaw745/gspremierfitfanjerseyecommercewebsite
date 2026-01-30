@@ -83,6 +83,7 @@ const ProductPage = () => {
 
   useEffect(() => {
     fetchProduct();
+    fetchReviews();
   }, [id]);
 
   const fetchProduct = async () => {
@@ -105,6 +106,52 @@ const ProductPage = () => {
       navigate('/shop');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/products/${id}/reviews`);
+      setReviews(response.data.reviews || []);
+      setReviewStats({
+        average_rating: response.data.average_rating || 0,
+        total: response.data.total || 0,
+        distribution: response.data.distribution || {}
+      });
+    } catch (error) {
+      console.error('Failed to fetch reviews:', error);
+    }
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      toast.error('Please sign in to write a review');
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      await axios.post(`${API_URL}/products/${id}/reviews`, {
+        product_id: id,
+        ...newReview
+      });
+      toast.success('Review submitted successfully!');
+      setReviewModalOpen(false);
+      setNewReview({ rating: 5, title: '', comment: '' });
+      fetchReviews();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const handleMarkHelpful = async (reviewId) => {
+    try {
+      await axios.post(`${API_URL}/reviews/${reviewId}/helpful`);
+      fetchReviews();
+    } catch (error) {
+      console.error('Failed to mark helpful:', error);
     }
   };
 
