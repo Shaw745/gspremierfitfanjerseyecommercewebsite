@@ -173,9 +173,7 @@ const HomePage = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6 text-white"
               >
-                ELEVATE
-                <br />
-                YOUR
+                ELEVATE YOUR
                 <br />
                 <span className="text-[#CCFF00]">GAME</span>
               </motion.h1>
@@ -183,7 +181,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                className="text-base md:text-lg lg:text-xl text-neutral-300 max-w-md mb-8"
+                className="text-base md:text-lg lg:text-xl text-neutral-300 max-w-xl mx-auto mb-8"
               >
                 Premium sportswear engineered for peak performance. Crafted with precision for athletes who demand excellence.
               </motion.p>
@@ -191,7 +189,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <Link to="/shop">
                   <Button
