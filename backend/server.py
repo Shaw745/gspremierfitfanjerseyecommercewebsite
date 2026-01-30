@@ -727,6 +727,22 @@ async def create_order(order_data: OrderCreate, current_user: dict = Depends(get
             "reference": reference
         }
     
+    # Send order confirmation email (non-blocking)
+    asyncio.create_task(send_order_confirmation_email(order, current_user["email"]))
+    
+    # Check and update inventory, send low stock alerts
+    for item in order_data.items:
+        product = await db.products.find_one({"id": item.product_id}, {"_id": 0})
+        if product:
+            new_stock = product.get("stock", 0) - item.quantity
+            await db.products.update_one(
+                {"id": item.product_id},
+                {"$set": {"stock": max(0, new_stock)}}
+            )
+            # Send low stock alert if below threshold
+            if new_stock <= LOW_STOCK_THRESHOLD and new_stock > 0:
+                asyncio.create_task(send_low_stock_alert({**product, "stock": new_stock}))
+    
     return {
         "order_id": order_id,
         "reference": reference,
