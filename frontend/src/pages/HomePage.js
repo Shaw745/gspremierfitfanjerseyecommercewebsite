@@ -123,7 +123,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white scroll-smooth">
+    <div className="min-h-screen bg-white scroll-smooth overflow-x-hidden">
       <Navbar />
 
       {/* Hero Section */}
