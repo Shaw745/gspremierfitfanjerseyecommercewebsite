@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Search, Heart } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Search, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { Button } from './ui/button';
@@ -14,14 +14,26 @@ import {
 } from './ui/dialog';
 import { toast } from 'sonner';
 
-const Navbar = ({ transparent = false }) => {
+const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, login, register, logout } = useAuth();
   const { cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [authModal, setAuthModal] = useState(null); // 'login' | 'register' | null
+  const [authModal, setAuthModal] = useState(null);
   const [authForm, setAuthForm] = useState({ email: '', password: '', full_name: '', phone: '' });
   const [authLoading, setAuthLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -43,53 +55,90 @@ const Navbar = ({ transparent = false }) => {
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
+      setSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Shop', path: '/shop' },
+    { name: 'New Arrivals', path: '/shop?featured=true' },
+    { name: 'Best Sellers', path: '/shop?collection=Elite Series' },
+    { name: 'About', path: '#about' },
+    { name: 'Contact', path: '#contact' },
+  ];
+
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/';
+    if (path.startsWith('#')) return false;
+    return location.pathname === path || location.search.includes(path.split('?')[1]);
+  };
+
   return (
     <>
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 ${transparent ? 'bg-transparent' : 'bg-white/95 backdrop-blur-md border-b border-neutral-200'}`}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-white/90 backdrop-blur-lg shadow-sm' 
+            : 'bg-white'
+        }`}
       >
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
-              <span className="text-2xl font-black tracking-tighter text-[#050505]">
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0" data-testid="logo-link">
+              <span className="text-xl md:text-2xl font-black tracking-tighter text-[#050505]">
                 GS PREMIER
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              <Link
-                to="/shop"
-                className="text-sm font-semibold uppercase tracking-wider text-neutral-700 hover:text-[#050505] transition-colors"
-                data-testid="shop-link"
-              >
-                Shop
-              </Link>
-              <Link
-                to="/shop?collection=Elite Series"
-                className="text-sm font-semibold uppercase tracking-wider text-neutral-700 hover:text-[#050505] transition-colors"
-                data-testid="collections-link"
-              >
-                Collections
-              </Link>
-              <Link
-                to="/shop?featured=true"
-                className="text-sm font-semibold uppercase tracking-wider text-neutral-700 hover:text-[#050505] transition-colors"
-                data-testid="new-arrivals-link"
-              >
-                New Arrivals
-              </Link>
+            {/* Desktop Navigation - Center */}
+            <div className="hidden lg:flex items-center justify-center flex-1 px-8">
+              <div className="flex items-center gap-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors group ${
+                      isActive(link.path) 
+                        ? 'text-[#050505]' 
+                        : 'text-neutral-500 hover:text-[#050505]'
+                    }`}
+                    data-testid={`nav-${link.name.toLowerCase().replace(' ', '-')}`}
+                  >
+                    {link.name}
+                    <span className={`absolute bottom-0 left-4 right-4 h-0.5 bg-[#CCFF00] transform transition-transform duration-300 ${
+                      isActive(link.path) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`} />
+                  </Link>
+                ))}
+              </div>
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Search Button */}
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="p-2.5 hover:bg-neutral-100 rounded-full transition-colors"
+                data-testid="search-btn"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+
+              {/* Account Button */}
               {isAuthenticated ? (
                 <button
                   onClick={() => navigate('/account')}
-                  className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+                  className="p-2.5 hover:bg-neutral-100 rounded-full transition-colors"
                   data-testid="account-btn"
                 >
                   <User className="w-5 h-5" />
@@ -97,30 +146,45 @@ const Navbar = ({ transparent = false }) => {
               ) : (
                 <button
                   onClick={() => setAuthModal('login')}
-                  className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+                  className="p-2.5 hover:bg-neutral-100 rounded-full transition-colors"
                   data-testid="login-btn"
                 >
                   <User className="w-5 h-5" />
                 </button>
               )}
 
+              {/* Cart Button */}
               <Link
                 to="/cart"
-                className="p-2 hover:bg-neutral-100 rounded-full transition-colors relative"
+                className="p-2.5 hover:bg-neutral-100 rounded-full transition-colors relative"
                 data-testid="cart-btn"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#CCFF00] text-[#050505] text-xs font-bold rounded-full flex items-center justify-center">
+                  <motion.span 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#CCFF00] text-[#050505] text-xs font-bold rounded-full flex items-center justify-center"
+                  >
                     {cartCount}
-                  </span>
+                  </motion.span>
                 )}
+              </Link>
+
+              {/* Shop Now CTA - Desktop */}
+              <Link to="/shop" className="hidden md:block ml-2">
+                <Button
+                  className="bg-[#050505] hover:bg-[#1a1a1a] text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-none"
+                  data-testid="shop-now-nav-btn"
+                >
+                  Shop Now
+                </Button>
               </Link>
 
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 hover:bg-neutral-100 rounded-full transition-colors"
+                className="lg:hidden p-2.5 hover:bg-neutral-100 rounded-full transition-colors ml-1"
                 data-testid="mobile-menu-btn"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -129,66 +193,137 @@ const Navbar = ({ transparent = false }) => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Slide from right */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t border-neutral-200"
-            >
-              <div className="px-6 py-4 space-y-4">
-                <Link
-                  to="/shop"
-                  className="block text-lg font-semibold uppercase tracking-wider"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Shop
-                </Link>
-                <Link
-                  to="/shop?collection=Elite Series"
-                  className="block text-lg font-semibold uppercase tracking-wider"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Collections
-                </Link>
-                <Link
-                  to="/shop?featured=true"
-                  className="block text-lg font-semibold uppercase tracking-wider"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  New Arrivals
-                </Link>
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      to="/account"
-                      className="block text-lg font-semibold uppercase tracking-wider"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      My Account
-                    </Link>
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              
+              {/* Menu Panel */}
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'tween', duration: 0.3 }}
+                className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 lg:hidden shadow-2xl"
+              >
+                <div className="flex flex-col h-full">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-6 border-b">
+                    <span className="text-lg font-black tracking-tighter">MENU</span>
                     <button
-                      onClick={() => { logout(); setMobileMenuOpen(false); }}
-                      className="block text-lg font-semibold uppercase tracking-wider text-red-600"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
                     >
-                      Logout
+                      <X className="w-5 h-5" />
                     </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => { setAuthModal('login'); setMobileMenuOpen(false); }}
-                    className="block text-lg font-semibold uppercase tracking-wider"
-                  >
-                    Sign In
-                  </button>
-                )}
-              </div>
-            </motion.div>
+                  </div>
+
+                  {/* Links */}
+                  <nav className="flex-1 overflow-y-auto py-4">
+                    {navLinks.map((link, index) => (
+                      <motion.div
+                        key={link.name}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <Link
+                          to={link.path}
+                          className={`flex items-center justify-between px-6 py-4 text-lg font-medium transition-colors ${
+                            isActive(link.path)
+                              ? 'bg-[#CCFF00]/10 text-[#050505] border-l-4 border-[#CCFF00]'
+                              : 'text-neutral-700 hover:bg-neutral-50'
+                          }`}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {link.name}
+                          <ChevronRight className="w-5 h-5 text-neutral-400" />
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </nav>
+
+                  {/* Footer */}
+                  <div className="p-6 border-t space-y-4">
+                    <Link 
+                      to="/shop"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block"
+                    >
+                      <Button className="w-full bg-[#050505] hover:bg-[#1a1a1a] text-white font-semibold uppercase tracking-wider py-4 rounded-none">
+                        Shop Now
+                      </Button>
+                    </Link>
+                    {isAuthenticated ? (
+                      <div className="flex gap-3">
+                        <Link
+                          to="/account"
+                          className="flex-1"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Button variant="outline" className="w-full rounded-none">
+                            My Account
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          className="rounded-none"
+                          onClick={() => { logout(); setMobileMenuOpen(false); }}
+                        >
+                          Logout
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-none"
+                        onClick={() => { setAuthModal('login'); setMobileMenuOpen(false); }}
+                      >
+                        Sign In / Register
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </motion.nav>
+
+      {/* Search Modal */}
+      <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl">SEARCH</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSearch} className="mt-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1"
+                autoFocus
+                data-testid="search-input"
+              />
+              <Button 
+                type="submit" 
+                className="bg-[#050505] hover:bg-[#1a1a1a] text-white px-6"
+              >
+                <Search className="w-4 h-4" />
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Auth Modal */}
       <Dialog open={!!authModal} onOpenChange={() => setAuthModal(null)}>
