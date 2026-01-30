@@ -431,6 +431,62 @@ class GsPremierFitFanAPITester:
         
         return success1 and success2
 
+    def test_product_reviews(self):
+        """Test product reviews functionality"""
+        if not self.product_id:
+            print("❌ No product ID available for reviews testing")
+            return False
+        
+        # Test get reviews for product (should work without auth)
+        success1, response = self.run_test(
+            "Get Product Reviews",
+            "GET",
+            f"products/{self.product_id}/reviews",
+            200
+        )
+        
+        # Test create review (requires auth)
+        review_data = {
+            "product_id": self.product_id,
+            "rating": 5,
+            "title": "Great product!",
+            "comment": "This is an excellent jersey, very comfortable and high quality."
+        }
+        
+        success2, response = self.run_test(
+            "Create Product Review",
+            "POST",
+            f"products/{self.product_id}/reviews",
+            200,
+            data=review_data
+        )
+        
+        return success1 and success2
+
+    def test_admin_update_order_tracking(self):
+        """Test admin order tracking update"""
+        if not self.order_id:
+            print("❌ No order ID available for tracking testing")
+            return False
+            
+        tracking_data = {
+            "status": "shipped",
+            "tracking_number": "TEST123456789",
+            "tracking_url": "https://tracking.example.com/TEST123456789",
+            "carrier": "DHL",
+            "notes": "Package shipped via DHL Express"
+        }
+        
+        success, response = self.run_test(
+            "Admin Update Order Tracking",
+            "PUT",
+            f"admin/orders/{self.order_id}",
+            200,
+            data=tracking_data,
+            use_admin=True
+        )
+        return success
+
 def main():
     print("🚀 Starting Gs Premier Fit Fan API Tests")
     print("=" * 50)
