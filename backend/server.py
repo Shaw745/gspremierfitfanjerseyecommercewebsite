@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request, UploadFile, File, Form, BackgroundTasks
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -15,7 +15,8 @@ from jose import JWTError, jwt
 import httpx
 import hmac
 import hashlib
-import base64
+import asyncio
+import resend
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -37,6 +38,11 @@ PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY', '')
 # CoinGecko API
 COINGECKO_API_KEY = os.environ.get('COINGECKO_API_KEY', '')
 
+# Resend Email
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+resend.api_key = RESEND_API_KEY
+
 # Crypto Wallets
 CRYPTO_WALLETS = {
     'btc': os.environ.get('BTC_WALLET', ''),
@@ -51,6 +57,9 @@ BANK_DETAILS = {
     'account_number': os.environ.get('BANK_ACCOUNT_NUMBER', ''),
     'account_name': os.environ.get('BANK_ACCOUNT_NAME', '')
 }
+
+# Inventory Alert Threshold
+LOW_STOCK_THRESHOLD = 10
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
