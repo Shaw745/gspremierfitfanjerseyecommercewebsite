@@ -81,7 +81,7 @@ const AdminOrders = () => {
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
-      await axios.put(`${API_URL}/admin/orders/${orderId}?status=${newStatus}`);
+      await axios.put(`${API_URL}/admin/orders/${orderId}`, { status: newStatus });
       toast.success('Order status updated');
       fetchOrders();
       if (selectedOrder?.id === orderId) {
@@ -97,6 +97,7 @@ const AdminOrders = () => {
       case 'confirmed': return 'bg-green-100 text-green-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'shipped': return 'bg-blue-100 text-blue-800';
+      case 'out_for_delivery': return 'bg-purple-100 text-purple-800';
       case 'delivered': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-neutral-100 text-neutral-800';
