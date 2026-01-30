@@ -43,99 +43,132 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar transparent />
+      <Navbar />
 
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="relative h-screen flex items-center justify-center overflow-hidden bg-[#050505]"
+        className="relative min-h-screen flex items-center overflow-hidden bg-[#050505]"
         onMouseMove={handleMouseMove}
         data-testid="hero-section"
       >
-        {/* Background Image with Parallax */}
-        <motion.div 
-          style={{ scale: heroScale, opacity: heroOpacity }}
-          className="absolute inset-0"
-        >
+        {/* Background Image */}
+        <div className="absolute inset-0">
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1743630738181-b0e26c76c74c?w=1920&q=80')`,
+              backgroundImage: `url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1920&q=80')`,
             }}
           />
-          <div className="absolute inset-0 bg-black/60" />
-        </motion.div>
-
-        {/* 3D Floating Jersey Element */}
-        <div className="perspective-container absolute inset-0 flex items-center justify-center pointer-events-none">
-          <motion.div
-            ref={jerseyRef}
-            className="preserve-3d w-[300px] md:w-[500px] h-[400px] md:h-[600px]"
-            animate={{
-              rotateY: mousePosition.x,
-              rotateX: -mousePosition.y,
-            }}
-            transition={{ type: 'spring', stiffness: 100, damping: 30 }}
-          >
-            <img
-              src="https://images.pexels.com/photos/28555936/pexels-photo-28555936.jpeg?w=500"
-              alt="Premium Jersey"
-              className="w-full h-full object-contain drop-shadow-2xl"
-              style={{ transform: 'translateZ(50px)' }}
-            />
-          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/90 to-[#050505]/70" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <p className="text-[#CCFF00] text-sm md:text-base font-semibold uppercase tracking-[0.3em] mb-4">
-              Engineered for the Obsessed
-            </p>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none mb-6">
-              ELEVATE YOUR
-              <br />
-              <span className="text-[#CCFF00]">GAME</span>
-            </h1>
-            <p className="text-lg md:text-xl text-neutral-300 max-w-xl mx-auto mb-8">
-              Premium sportswear engineered for peak performance. Crafted with precision for athletes who demand excellence.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/shop">
+        {/* Main Content Grid */}
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pt-32 pb-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <p className="text-[#CCFF00] text-sm md:text-base font-semibold uppercase tracking-[0.3em] mb-4">
+                Engineered for the Obsessed
+              </p>
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6 text-white">
+                ELEVATE
+                <br />
+                YOUR
+                <br />
+                <span className="text-[#CCFF00]">GAME</span>
+              </h1>
+              <p className="text-lg md:text-xl text-neutral-300 max-w-md mb-8">
+                Premium sportswear engineered for peak performance. Crafted with precision for athletes who demand excellence.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/shop">
+                  <Button
+                    size="lg"
+                    className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-8 py-6 text-base"
+                    data-testid="shop-now-btn"
+                  >
+                    Shop Now
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
                 <Button
                   size="lg"
-                  className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-8 py-6 text-base"
-                  data-testid="shop-now-btn"
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-[#050505] font-semibold uppercase tracking-wider px-8 py-6 text-base"
+                  data-testid="watch-video-btn"
                 >
-                  Shop Now
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <Play className="mr-2 w-5 h-5" />
+                  Watch Film
                 </Button>
-              </Link>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-[#050505] font-semibold uppercase tracking-wider px-8 py-6 text-base"
-                data-testid="watch-video-btn"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                Watch Film
-              </Button>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Right - 3D Jersey */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="hidden lg:flex justify-center items-center"
+            >
+              <div className="perspective-container">
+                <motion.div
+                  ref={jerseyRef}
+                  className="preserve-3d w-[400px] h-[500px] relative"
+                  animate={{
+                    rotateY: mousePosition.x * 0.5,
+                    rotateX: -mousePosition.y * 0.5,
+                  }}
+                  transition={{ type: 'spring', stiffness: 100, damping: 30 }}
+                >
+                  {/* Glow Effect */}
+                  <div className="absolute inset-0 bg-[#CCFF00]/20 blur-3xl rounded-full scale-75" />
+                  <img
+                    src="https://images.pexels.com/photos/28555936/pexels-photo-28555936.jpeg?w=500"
+                    alt="Premium Jersey"
+                    className="w-full h-full object-contain drop-shadow-[0_0_80px_rgba(204,255,0,0.3)] relative z-10"
+                    style={{ transform: 'translateZ(50px)' }}
+                  />
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         {/* Scroll Indicator */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white z-10"
         >
           <ChevronDown className="w-8 h-8" />
         </motion.div>
+
+        {/* Stats Bar */}
+        <div className="absolute bottom-0 left-0 right-0 bg-[#CCFF00] py-4 z-10">
+          <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-wrap justify-center md:justify-between items-center gap-6 md:gap-0">
+            <div className="text-center md:text-left">
+              <p className="text-3xl md:text-4xl font-black text-[#050505]">100%</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Premium Quality</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-black text-[#050505]">50K+</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Happy Athletes</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-black text-[#050505]">24/7</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Support</p>
+            </div>
+            <div className="text-center md:text-right">
+              <p className="text-3xl md:text-4xl font-black text-[#050505]">30+</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Countries</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Marquee Section */}
