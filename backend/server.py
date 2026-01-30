@@ -872,14 +872,59 @@ async def admin_get_orders(
     return {"orders": orders, "total": total}
 
 @api_router.put("/admin/orders/{order_id}")
-async def admin_update_order(order_id: str, status: str, admin: dict = Depends(get_admin_user)):
-    result = await db.orders.update_one(
-        {"id": order_id},
-        {"$set": {"status": status, "updated_at": datetime.now(timezone.utc).isoformat()}}
-    )
-    if result.matched_count == 0:
+async def admin_update_order(order_id: str, update: OrderStatusUpdate, admin: dict = Depends(get_admin_user)):
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    
+    update_data = {
+        "status": update.status,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Add tracking info if provided
+    tracking_info = {}
+    if update.tracking_number:
+        tracking_info["tracking_number"] = update.tracking_number
+        update_data["tracking_number"] = update.tracking_number
+    if update.tracking_url:
+        tracking_info["tracking_url"] = update.tracking_url
+        update_data["tracking_url"] = update.tracking_url
+    if update.carrier:
+        tracking_info["carrier"] = update.carrier
+        update_data["carrier"] = update.carrier
+    
+    # Add tracking history
+    tracking_event = {
+        "status": update.status,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "description": update.notes or f"Order status updated to {update.status}"
+    }
+    
+    await db.orders.update_one(
+        {"id": order_id},
+        {
+            "$set": update_data,
+            "$push": {"tracking_history": tracking_event}
+        }
+    )
+    
+    # Send shipping update email if status changed to shipped or delivered
+    if update.status in ["shipped", "delivered", "out_for_delivery"]:
+        updated_order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+        asyncio.create_task(send_shipping_update_email(updated_order, order["user_email"], tracking_info))
+    
     return {"message": "Order updated"}
+
+@api_router.get("/orders/{order_id}/tracking")
+async def get_order_tracking(order_id: str, current_user: dict = Depends(get_current_user)):
+    order = await db.orders.find_one(
+        {"id": order_id, "user_id": current_user["id"]},
+        {"_id": 0, "tracking_history": 1, "tracking_number": 1, "tracking_url": 1, "carrier": 1, "status": 1}
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
 
 @api_router.get("/admin/customers")
 async def admin_get_customers(limit: int = 50, skip: int = 0, admin: dict = Depends(get_admin_user)):
