@@ -1,0 +1,132 @@
+{
+  "brand_identity": {
+    "name": "Gs Premier Fit Fan",
+    "archetype": "The Performance Pro",
+    "vibe": "Elite, Kinetic, Premium, Global",
+    "tagline": "Engineered for the Obsessed.",
+    "emotional_tone": "Confidence, Precision, Energy"
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Barlow Condensed, sans-serif",
+      "weights": ["700", "800", "900"],
+      "usage": "All section titles, hero text, product names. MUST be uppercase for top-level headers.",
+      "letter_spacing": "tracking-tighter"
+    },
+    "body": {
+      "font_family": "Manrope, sans-serif",
+      "weights": ["400", "500", "600"],
+      "usage": "Descriptions, UI elements, navigation.",
+      "letter_spacing": "tracking-normal"
+    },
+    "google_fonts_import": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Manrope:wght@400;500;600&display=swap"
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "name": "Obsidian",
+        "hex": "#050505",
+        "tailwind": "bg-neutral-950"
+      },
+      "secondary": {
+        "name": "Pure White",
+        "hex": "#FFFFFF",
+        "tailwind": "bg-white"
+      },
+      "accent": {
+        "name": "Electric Volt",
+        "hex": "#CCFF00",
+        "tailwind": "bg-[#CCFF00]",
+        "description": "Use sparingly for CTAs, hover states, and kinetic energy."
+      },
+      "muted": {
+        "name": "Carbon",
+        "hex": "#1A1A1A",
+        "tailwind": "bg-neutral-900"
+      }
+    },
+    "theme_strategy": {
+      "mode": "Light Mode default for Shop, Dark Mode for Hero/Marketing sections.",
+      "admin_customization": "Use CSS variables (--primary-brand) for dashboard accents to allow admin theming."
+    }
+  },
+  "layout_grid": {
+    "container": "max-w-[1400px] mx-auto px-6 md:px-12",
+    "spacing": {
+      "section_gap": "py-24 md:py-32",
+      "element_gap": "gap-6 md:gap-12"
+    },
+    "grid_system": "Use 'Bento' style grids for marketing (asymmetrical) and strict 4-col grids for product catalogs."
+  },
+  "ui_components": {
+    "buttons": {
+      "style": "Sharp edges (rounded-none) or minimal radius (rounded-sm). Uppercase text. Bold weight.",
+      "hover": "Slide-up text effect or background fill animation."
+    },
+    "cards": {
+      "style": "Minimalist. No visible borders by default. Large image area (aspect-[3/4]).",
+      "hover": "Image scale (zoom-in) + Title slide up. No shadow, just pure visual focus."
+    },
+    "navigation": {
+      "style": "Floating glassmorphism header or solid minimal bar. Mega-menu for categories."
+    },
+    "forms": {
+      "style": "Underlined inputs (border-b) or flat solid backgrounds. No outlines."
+    }
+  },
+  "motion_library": {
+    "css_3d_hero": {
+      "concept": "The Floating Jersey",
+      "technique": "CSS perspective: 1000px + transform: rotateY() on mouse move.",
+      "implementation_note": "Create a container with 'perspective'. The inner element (jersey image) has 'transform-style: preserve-3d'. Use JS to update --rotateX and --rotateY variables based on mouse position."
+    },
+    "scroll_effects": {
+      "library": "Framer Motion or Lenis for smooth scroll.",
+      "effects": ["Parallax images", "Text reveal (staggered lines)", "Marquee scrolling for brand values"]
+    },
+    "micro_interactions": {
+      "hover": "Magnetic buttons (button moves slightly towards cursor).",
+      "click": "Scale down (0.95)."
+    }
+  },
+  "images": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1743630738181-b0e26c76c74c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwxfHxhdGhsZXRpYyUyMG1vZGVsJTIwd2VhcmluZyUyMHNwb3J0cyUyMGplcnNleSUyMGR5bmFtaWMlMjBwb3NlJTIwc3R1ZGlvJTIwbGlnaHRpbmd8ZW58MHx8fHwxNzY5Nzg3OTAxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Athletic silhouette in motion",
+      "usage": "Hero section background with dark overlay."
+    },
+    "lifestyle_1": {
+      "url": "https://images.unsplash.com/photo-1686561394788-e450f15ff1e5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwyfHxhdGhsZXRpYyUyMG1vZGVsJTIwd2VhcmluZyUyMHNwb3J0cyUyMGplcnNleSUyMGR5bmFtaWMlMjBwb3NlJTIwc3R1ZGlvJTIwbGlnaHRpbmd8ZW58MHx8fHwxNzY5Nzg3OTAxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Focused athlete portrait",
+      "usage": "About section or 'Join the Team' CTA."
+    },
+    "texture_pattern": {
+      "url": "https://images.unsplash.com/photo-1671810458671-759db56dc405?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBqZXJzZXklMjB0ZXh0dXJlJTIwZmFicmljJTIwY2xvc2UlMjB1cCUyMGRldGFpbHxlbnwwfHx8fDE3Njk3ODc5MDZ8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Jersey fabric texture",
+      "usage": "Subtle background pattern for 'Features' section."
+    },
+    "product_placeholders": [
+      "https://images.pexels.com/photos/28555936/pexels-photo-28555936.jpeg",
+      "https://images.pexels.com/photos/9519508/pexels-photo-9519508.jpeg"
+    ]
+  },
+  "accessibility": {
+    "contrast": "Ensure text on images has a backdrop-blur or dark gradient overlay.",
+    "reduced_motion": "Disable 3D effects if 'prefers-reduced-motion' is true.",
+    "focus_states": "Visible outline in accent color (#CCFF00)."
+  },
+  "instructions_to_main_agent": {
+    "1": "Install 'lucide-react' for icons.",
+    "2": "Use 'framer-motion' for complex entrance animations.",
+    "3": "Implement the 'Floating Jersey' 3D effect in the Hero component using pure CSS transforms driven by mousemove event listeners.",
+    "4": "Ensure the Admin Dashboard uses CSS variables for colors so the 'Theme Customization' feature works.",
+    "5": "Use the 'Barlow Condensed' font for all headings to give that 'Nike/Gatorade' athletic feel.",
+    "6": "Do not use standard Shadcn cards for products; build a custom minimal product card.",
+    "7": "For the 'Dynamic Theme System', create a Context Provider that updates the root CSS variables."
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": {
+    "design_philosophy": "Avoid generic AI layouts. Use asymmetry, overlap, and bold typography.",
+    "interactions": "Every button must have a hover state. Every page transition must be smooth.",
+    "testing": "Add data-testid to all interactive elements (buttons, inputs, links)."
+  }
+}
