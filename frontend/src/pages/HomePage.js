@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, Play, ChevronDown } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+import { ArrowRight, Play } from 'lucide-react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -9,9 +9,100 @@ import ProductCard from '../components/ProductCard';
 import { Button } from '../components/ui/button';
 import { API_URL } from '../lib/utils';
 
+// Animated Counter Component
+const AnimatedCounter = ({ end, duration = 2, suffix = '', prefix = '' }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  useEffect(() => {
+    if (!isInView) return;
+    
+    let startTime;
+    let animationFrame;
+    
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+      
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.floor(easeOutQuart * end));
+      
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+    
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isInView, end, duration]);
+  
+  return (
+    <span ref={ref}>
+      {prefix}{count}{suffix}
+    </span>
+  );
+};
+
+// Stats Section Component
+const StatsSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  
+  const stats = [
+    { value: 100, suffix: '%', label: 'Premium Quality' },
+    { value: 50, suffix: 'K+', label: 'Happy Athletes' },
+    { value: null, display: '24/7', label: 'Support' },
+    { value: 30, suffix: '+', label: 'Countries' },
+  ];
+  
+  return (
+    <section 
+      ref={ref}
+      className="bg-[#CCFF00] py-8 md:py-10"
+      data-testid="stats-section"
+    >
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="text-center"
+            >
+              <p className="text-4xl md:text-5xl lg:text-6xl font-black text-[#050505] mb-2">
+                {stat.value !== null ? (
+                  <AnimatedCounter 
+                    end={stat.value} 
+                    suffix={stat.suffix} 
+                    duration={1.8}
+                  />
+                ) : (
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                  >
+                    {stat.display}
+                  </motion.span>
+                )}
+              </p>
+              <p className="text-xs md:text-sm font-semibold uppercase tracking-wider text-[#050505]/70">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const heroRef = useRef(null);
   const jerseyRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -32,19 +123,18 @@ const HomePage = () => {
   const handleMouseMove = (e) => {
     if (!jerseyRef.current) return;
     const rect = jerseyRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) / 25;
-    const y = (e.clientY - rect.top - rect.height / 2) / 25;
+    const x = (e.clientX - rect.left - rect.width / 2) / 30;
+    const y = (e.clientY - rect.top - rect.height / 2) / 30;
     setMousePosition({ x, y });
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white scroll-smooth">
       <Navbar />
 
       {/* Hero Section */}
       <section 
-        ref={heroRef}
-        className="relative min-h-screen flex items-center overflow-hidden bg-[#050505]"
+        className="relative min-h-screen flex items-center overflow-hidden bg-[#050505] pt-20"
         onMouseMove={handleMouseMove}
         data-testid="hero-section"
       >
@@ -56,36 +146,57 @@ const HomePage = () => {
               backgroundImage: `url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1920&q=80')`,
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/90 to-[#050505]/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/95 to-[#050505]/80" />
         </div>
 
         {/* Main Content Grid */}
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pt-32 pb-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 py-12 md:py-0">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[calc(100vh-80px)]">
             {/* Left - Text Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              className="order-2 lg:order-1"
             >
-              <p className="text-[#CCFF00] text-sm md:text-base font-semibold uppercase tracking-[0.3em] mb-4">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="text-[#CCFF00] text-xs md:text-sm font-semibold uppercase tracking-[0.3em] mb-4 md:mb-6"
+              >
                 Engineered for the Obsessed
-              </p>
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6 text-white">
+              </motion.p>
+              <motion.h1 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6 text-white"
+              >
                 ELEVATE
                 <br />
                 YOUR
                 <br />
                 <span className="text-[#CCFF00]">GAME</span>
-              </h1>
-              <p className="text-lg md:text-xl text-neutral-300 max-w-md mb-8">
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="text-base md:text-lg lg:text-xl text-neutral-300 max-w-md mb-8"
+              >
                 Premium sportswear engineered for peak performance. Crafted with precision for athletes who demand excellence.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
                 <Link to="/shop">
                   <Button
                     size="lg"
-                    className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-8 py-6 text-base"
+                    className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-8 py-6 text-sm md:text-base rounded-none transition-all hover:scale-105"
                     data-testid="shop-now-btn"
                   >
                     Shop Now
@@ -95,13 +206,13 @@ const HomePage = () => {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-[#050505] font-semibold uppercase tracking-wider px-8 py-6 text-base"
+                  className="border-white text-white hover:bg-white hover:text-[#050505] font-semibold uppercase tracking-wider px-8 py-6 text-sm md:text-base rounded-none transition-all"
                   data-testid="watch-video-btn"
                 >
                   <Play className="mr-2 w-5 h-5" />
                   Watch Film
                 </Button>
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* Right - 3D Jersey */}
@@ -109,12 +220,12 @@ const HomePage = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="hidden lg:flex justify-center items-center"
+              className="order-1 lg:order-2 flex justify-center items-center"
             >
               <div className="perspective-container">
                 <motion.div
                   ref={jerseyRef}
-                  className="preserve-3d w-[400px] h-[500px] relative"
+                  className="preserve-3d w-[280px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[350px] sm:h-[420px] md:h-[500px] lg:h-[550px] relative"
                   animate={{
                     rotateY: mousePosition.x * 0.5,
                     rotateX: -mousePosition.y * 0.5,
@@ -122,8 +233,11 @@ const HomePage = () => {
                   transition={{ type: 'spring', stiffness: 100, damping: 30 }}
                 >
                   {/* Glow Effect */}
-                  <div className="absolute inset-0 bg-[#CCFF00]/20 blur-3xl rounded-full scale-75" />
-                  <img
+                  <div className="absolute inset-0 bg-[#CCFF00]/20 blur-3xl rounded-full scale-75 animate-pulse" />
+                  <motion.img
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
                     src="https://images.pexels.com/photos/28555936/pexels-photo-28555936.jpeg?w=500"
                     alt="Premium Jersey"
                     className="w-full h-full object-contain drop-shadow-[0_0_80px_rgba(204,255,0,0.3)] relative z-10"
@@ -135,63 +249,62 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <motion.div
+        {/* Scroll indicator */}
+        <motion.div 
           animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white z-10"
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         >
-          <ChevronDown className="w-8 h-8" />
-        </motion.div>
-
-        {/* Stats Bar */}
-        <div className="absolute bottom-0 left-0 right-0 bg-[#CCFF00] py-4 z-10">
-          <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-wrap justify-center md:justify-between items-center gap-6 md:gap-0">
-            <div className="text-center md:text-left">
-              <p className="text-3xl md:text-4xl font-black text-[#050505]">100%</p>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Premium Quality</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl md:text-4xl font-black text-[#050505]">50K+</p>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Happy Athletes</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl md:text-4xl font-black text-[#050505]">24/7</p>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Support</p>
-            </div>
-            <div className="text-center md:text-right">
-              <p className="text-3xl md:text-4xl font-black text-[#050505]">30+</p>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#050505]/70">Countries</p>
-            </div>
+          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center pt-2">
+            <motion.div 
+              animate={{ y: [0, 12, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="w-1.5 h-1.5 bg-[#CCFF00] rounded-full"
+            />
           </div>
-        </div>
+        </motion.div>
       </section>
 
+      {/* Animated Stats Section */}
+      <StatsSection />
+
       {/* Featured Products */}
-      <section className="py-24 md:py-32 px-6 md:px-12" data-testid="featured-products-section">
+      <section className="py-20 md:py-28 px-6 md:px-12" data-testid="featured-products-section">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
-            <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <p className="text-[#CCFF00] bg-[#050505] inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4">
                 Featured
               </p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter">
                 NEW ARRIVALS
               </h2>
-            </div>
-            <Link to="/shop?featured=true">
-              <Button
-                variant="outline"
-                className="border-[#050505] text-[#050505] hover:bg-[#050505] hover:text-white font-semibold uppercase tracking-wider"
-                data-testid="view-all-products-btn"
-              >
-                View All
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Link to="/shop?featured=true">
+                <Button
+                  variant="outline"
+                  className="border-[#050505] text-[#050505] hover:bg-[#050505] hover:text-white font-semibold uppercase tracking-wider rounded-none transition-all hover:scale-105"
+                  data-testid="view-all-products-btn"
+                >
+                  View All
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </motion.div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
             {featuredProducts.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}
@@ -200,9 +313,9 @@ const HomePage = () => {
       </section>
 
       {/* Brand Story Section */}
-      <section className="relative py-24 md:py-32 bg-[#050505] overflow-hidden">
+      <section className="relative py-20 md:py-28 bg-[#050505] overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
+          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -217,14 +330,14 @@ const HomePage = () => {
                 <br />
                 <span className="text-[#CCFF00]">CHAMPIONS</span>
               </h2>
-              <p className="text-neutral-400 text-lg leading-relaxed mb-8">
+              <p className="text-neutral-400 text-base md:text-lg leading-relaxed mb-6">
                 At Gs Premier Fit Fan, we don't just make sportswear—we engineer performance. Every stitch, every fabric choice, every design decision is made with one goal: to help you perform at your absolute best.
               </p>
-              <p className="text-neutral-400 text-lg leading-relaxed mb-8">
+              <p className="text-neutral-400 text-base md:text-lg leading-relaxed mb-8">
                 Born from a passion for sports and an obsession with quality, we're building a global brand that represents the next generation of athletic excellence.
               </p>
               <Button
-                className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider"
+                className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider rounded-none transition-all hover:scale-105"
                 data-testid="learn-more-btn"
               >
                 Learn More
@@ -241,35 +354,46 @@ const HomePage = () => {
             >
               <div className="aspect-[4/5] overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1686561394788-e450f15ff1e5?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80"
                   alt="Athlete"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
-              <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#CCFF00] flex items-center justify-center">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 w-36 h-36 md:w-48 md:h-48 bg-[#CCFF00] flex items-center justify-center"
+              >
                 <div className="text-center">
-                  <p className="text-5xl font-black text-[#050505]">100%</p>
-                  <p className="text-sm font-semibold text-[#050505] uppercase tracking-wider">Premium Quality</p>
+                  <p className="text-4xl md:text-5xl font-black text-[#050505]">100%</p>
+                  <p className="text-xs md:text-sm font-semibold text-[#050505] uppercase tracking-wider">Premium Quality</p>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Categories Grid */}
-      <section className="py-24 md:py-32 px-6 md:px-12" data-testid="categories-section">
+      <section className="py-20 md:py-28 px-6 md:px-12" data-testid="categories-section" id="about">
         <div className="max-w-[1400px] mx-auto">
-          <div className="text-center mb-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-4">
               SHOP BY SPORT
             </h2>
-            <p className="text-neutral-600 text-lg max-w-xl mx-auto">
+            <p className="text-neutral-600 text-base md:text-lg max-w-xl mx-auto">
               Find the perfect gear for your game
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {[
               { name: 'Football', image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&q=80' },
               { name: 'Basketball', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80' },
@@ -290,14 +414,14 @@ const HomePage = () => {
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-full object-cover image-zoom"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-2">
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tighter mb-2">
                       {category.name.toUpperCase()}
                     </h3>
-                    <span className="inline-flex items-center text-[#CCFF00] font-semibold uppercase tracking-wider text-sm group-hover:translate-x-2 transition-transform">
+                    <span className="inline-flex items-center text-[#CCFF00] font-semibold uppercase tracking-wider text-sm group-hover:translate-x-2 transition-transform duration-300">
                       Shop Now <ArrowRight className="ml-2 w-4 h-4" />
                     </span>
                   </div>
@@ -309,11 +433,11 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section className="relative py-20 md:py-28 overflow-hidden" id="contact">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1671810458671-759db56dc405?w=1920&q=80')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1920&q=80')`,
           }}
         />
         <div className="absolute inset-0 bg-[#050505]/90" />
@@ -329,13 +453,13 @@ const HomePage = () => {
               <br />
               <span className="text-[#CCFF00]">DOMINATE?</span>
             </h2>
-            <p className="text-neutral-300 text-lg md:text-xl max-w-xl mx-auto mb-8">
+            <p className="text-neutral-300 text-base md:text-lg lg:text-xl max-w-xl mx-auto mb-8">
               Join thousands of athletes who trust Gs Premier Fit Fan for their performance needs.
             </p>
             <Link to="/shop">
               <Button
                 size="lg"
-                className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-12 py-6 text-base"
+                className="bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider px-10 md:px-12 py-6 text-sm md:text-base rounded-none transition-all hover:scale-105"
                 data-testid="explore-collection-btn"
               >
                 Explore Collection
