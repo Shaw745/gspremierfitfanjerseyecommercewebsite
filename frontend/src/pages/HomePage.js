@@ -15,10 +15,6 @@ const HomePage = () => {
   const jerseyRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 1.1]);
-
   useEffect(() => {
     fetchFeaturedProducts();
   }, []);
