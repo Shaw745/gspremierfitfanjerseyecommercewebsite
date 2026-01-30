@@ -480,6 +480,12 @@ const ProductPage = () => {
               >
                 Shipping
               </TabsTrigger>
+              <TabsTrigger
+                value="reviews"
+                className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-[#050505] rounded-none bg-transparent font-semibold uppercase tracking-wider text-sm"
+              >
+                Reviews ({reviewStats.total})
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="description" className="py-8">
               <p className="text-neutral-600 leading-relaxed max-w-3xl">
@@ -501,6 +507,77 @@ const ProductPage = () => {
                 <p>Standard delivery: 3-5 business days</p>
                 <p>Express delivery: 1-2 business days (additional fee applies)</p>
                 <p>International shipping available to select countries.</p>
+              </div>
+            </TabsContent>
+            <TabsContent value="reviews" className="py-8">
+              <div className="grid md:grid-cols-3 gap-8">
+                {/* Rating Summary */}
+                <div className="bg-white p-6 border">
+                  <div className="text-center mb-4">
+                    <p className="text-5xl font-black">{reviewStats.average_rating || 0}</p>
+                    <StarRating rating={reviewStats.average_rating} size="lg" />
+                    <p className="text-sm text-neutral-500 mt-2">{reviewStats.total} reviews</p>
+                  </div>
+                  <div className="space-y-2">
+                    {[5, 4, 3, 2, 1].map((star) => (
+                      <div key={star} className="flex items-center gap-2">
+                        <span className="text-sm w-3">{star}</span>
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <Progress 
+                          value={reviewStats.total ? (reviewStats.distribution[star] / reviewStats.total) * 100 : 0} 
+                          className="flex-1 h-2"
+                        />
+                        <span className="text-sm text-neutral-500 w-8">{reviewStats.distribution[star] || 0}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button 
+                    className="w-full mt-6 bg-[#050505] hover:bg-[#1a1a1a] text-white"
+                    onClick={() => setReviewModalOpen(true)}
+                    data-testid="write-review-btn"
+                  >
+                    Write a Review
+                  </Button>
+                </div>
+
+                {/* Reviews List */}
+                <div className="md:col-span-2 space-y-6">
+                  {reviews.length === 0 ? (
+                    <div className="text-center py-12">
+                      <p className="text-neutral-500">No reviews yet. Be the first to review this product!</p>
+                    </div>
+                  ) : (
+                    reviews.map((review) => (
+                      <div key={review.id} className="border-b pb-6" data-testid={`review-${review.id}`}>
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <StarRating rating={review.rating} size="sm" />
+                              {review.verified_purchase && (
+                                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                                  Verified Purchase
+                                </span>
+                              )}
+                            </div>
+                            <h4 className="font-semibold mt-1">{review.title}</h4>
+                          </div>
+                          <span className="text-sm text-neutral-500">{formatDate(review.created_at)}</span>
+                        </div>
+                        <p className="text-neutral-600 mb-3">{review.comment}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-neutral-500">by {review.user_name}</span>
+                          <button 
+                            onClick={() => handleMarkHelpful(review.id)}
+                            className="flex items-center gap-1 text-sm text-neutral-500 hover:text-[#050505]"
+                          >
+                            <ThumbsUp className="w-4 h-4" />
+                            Helpful ({review.helpful_count || 0})
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </TabsContent>
           </Tabs>
