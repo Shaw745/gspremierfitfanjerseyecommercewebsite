@@ -129,7 +129,6 @@ const HomePage = () => {
       {/* Hero Section */}
       <section 
         className="relative min-h-screen flex items-center overflow-hidden bg-[#050505] pt-20"
-        onMouseMove={handleMouseMove}
         data-testid="hero-section"
       >
         {/* Background Image */}
