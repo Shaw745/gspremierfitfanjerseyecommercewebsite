@@ -214,38 +214,6 @@ const HomePage = () => {
                 </Button>
               </motion.div>
             </motion.div>
-
-            {/* Right - 3D Jersey */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="order-1 lg:order-2 flex justify-center items-center"
-            >
-              <div className="perspective-container">
-                <motion.div
-                  ref={jerseyRef}
-                  className="preserve-3d w-[280px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[350px] sm:h-[420px] md:h-[500px] lg:h-[550px] relative"
-                  animate={{
-                    rotateY: mousePosition.x * 0.5,
-                    rotateX: -mousePosition.y * 0.5,
-                  }}
-                  transition={{ type: 'spring', stiffness: 100, damping: 30 }}
-                >
-                  {/* Glow Effect */}
-                  <div className="absolute inset-0 bg-[#CCFF00]/20 blur-3xl rounded-full scale-75 animate-pulse" />
-                  <motion.img
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.6 }}
-                    src="https://images.pexels.com/photos/28555936/pexels-photo-28555936.jpeg?w=500"
-                    alt="Premium Jersey"
-                    className="w-full h-full object-contain drop-shadow-[0_0_80px_rgba(204,255,0,0.3)] relative z-10"
-                    style={{ transform: 'translateZ(50px)' }}
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
           </div>
         </div>
 
