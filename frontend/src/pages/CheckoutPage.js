@@ -25,11 +25,15 @@ const CheckoutPage = () => {
   const [cryptoRates, setCryptoRates] = useState({});
   const [orderResult, setOrderResult] = useState(null);
   const [copied, setCopied] = useState('');
+  const [formErrors, setFormErrors] = useState({});
 
+  // Don't pre-fill admin data - only use customer data
+  const isAdmin = user?.is_admin || user?.email === 'admin@gspremierfitfan.com';
+  
   const [shippingForm, setShippingForm] = useState({
-    full_name: user?.full_name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
+    full_name: isAdmin ? '' : (user?.full_name || ''),
+    email: isAdmin ? '' : (user?.email || ''),
+    phone: isAdmin ? '' : (user?.phone || ''),
     address: '',
     city: '',
     state: '',
