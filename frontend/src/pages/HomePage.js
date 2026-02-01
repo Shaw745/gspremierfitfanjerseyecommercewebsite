@@ -156,7 +156,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-[#CCFF00] text-xs md:text-sm font-semibold uppercase tracking-[0.3em] mb-4 md:mb-6"
+                className="text-[#CCFF00] text-xs md:text-sm font-semibold uppercase tracking-[0.3em] mb-6 md:mb-8"
               >
                 Engineered for the Obsessed
               </motion.p>
@@ -164,7 +164,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6 text-white"
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 md:mb-10 text-white"
               >
                 ELEVATE YOUR
                 <br />
@@ -174,7 +174,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                className="text-base md:text-lg lg:text-xl text-neutral-300 max-w-xl mx-auto mb-8"
+                className="text-base md:text-lg lg:text-xl text-neutral-300 max-w-xl mx-auto mb-10 md:mb-12"
               >
                 Premium sportswear engineered for peak performance. Crafted with precision for athletes who demand excellence.
               </motion.p>
