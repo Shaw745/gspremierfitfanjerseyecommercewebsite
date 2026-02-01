@@ -546,8 +546,8 @@ async def upload_image(
     with open(file_path, "wb") as f:
         f.write(contents)
     
-    # Return the URL (will be served via static files mount)
-    image_url = f"/uploads/{unique_filename}"
+    # Return the URL (will be served via static files mount under /api prefix)
+    image_url = f"/api/uploads/{unique_filename}"
     
     return {"url": image_url, "filename": unique_filename}
 
