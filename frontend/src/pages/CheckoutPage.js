@@ -269,6 +269,53 @@ const CheckoutPage = () => {
     );
   }
 
+  // Processing Order Overlay
+  if (processingOrder) {
+    return (
+      <div className="min-h-screen bg-white overflow-x-hidden">
+        <Navbar />
+        <div className="pt-32 pb-24 px-6 md:px-12">
+          <div className="max-w-lg mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-[#050505] rounded-2xl p-12"
+            >
+              <div className="mb-8">
+                <div className="w-24 h-24 mx-auto bg-[#CCFF00] rounded-full flex items-center justify-center mb-6">
+                  <Loader2 className="w-12 h-12 animate-spin text-[#050505]" />
+                </div>
+                <h2 className="text-2xl font-bold text-white uppercase tracking-wide mb-2">
+                  Processing Your Order
+                </h2>
+                <p className="text-neutral-400">Please wait while we create your order...</p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-left bg-white/10 rounded-lg p-3">
+                  <Check className="w-5 h-5 text-[#CCFF00]" />
+                  <span className="text-white text-sm">Verifying cart items</span>
+                </div>
+                <div className="flex items-center gap-3 text-left bg-white/10 rounded-lg p-3">
+                  <Check className="w-5 h-5 text-[#CCFF00]" />
+                  <span className="text-white text-sm">Saving shipping information</span>
+                </div>
+                <div className="flex items-center gap-3 text-left bg-white/10 rounded-lg p-3">
+                  <Loader2 className="w-5 h-5 text-[#CCFF00] animate-spin" />
+                  <span className="text-white text-sm">Creating your order...</span>
+                </div>
+              </div>
+            </motion.div>
+            
+            <p className="mt-6 text-neutral-500 text-sm">
+              Do not close this page or refresh your browser.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <Navbar />
