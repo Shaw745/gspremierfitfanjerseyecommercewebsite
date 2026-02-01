@@ -233,22 +233,52 @@ const AdminOrders = () => {
                   </td>
                   <td className="p-4 font-semibold">{formatPrice(order.total)}</td>
                   <td className="p-4">
-                    <Badge className={getPaymentStatusColor(order.payment_status)}>
-                      {order.payment_status}
-                    </Badge>
+                    <div className="flex flex-col gap-2">
+                      <Badge className={getPaymentStatusColor(order.payment_status)}>
+                        {formatPaymentStatus(order.payment_status)}
+                      </Badge>
+                      {/* Show Confirm Payment button for awaiting_payment orders */}
+                      {(order.payment_status === 'awaiting_payment' || 
+                        (order.payment_status === 'pending' && 
+                         (order.payment_method === 'bank_transfer' || order.payment_method?.startsWith('crypto_')))) && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleConfirmPayment(order.id)}
+                          disabled={confirmingPayment === order.id}
+                          className="text-xs h-7 border-green-500 text-green-700 hover:bg-green-50"
+                          data-testid={`confirm-payment-${order.id}`}
+                        >
+                          {confirmingPayment === order.id ? (
+                            <>
+                              <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                              Confirming...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Confirm Payment
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </td>
                   <td className="p-4">
                     <Select
                       value={order.status}
                       onValueChange={(value) => handleUpdateStatus(order.id, value)}
                     >
-                      <SelectTrigger className={`w-32 ${getStatusColor(order.status)}`}>
-                        <SelectValue />
+                      <SelectTrigger className={`w-36 ${getStatusColor(order.status)}`}>
+                        <SelectValue>{formatOrderStatus(order.status)}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="pending_payment">Pending Payment</SelectItem>
                         <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="processing">Processing</SelectItem>
                         <SelectItem value="confirmed">Confirmed</SelectItem>
                         <SelectItem value="shipped">Shipped</SelectItem>
+                        <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
                         <SelectItem value="delivered">Delivered</SelectItem>
                         <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
