@@ -151,6 +151,47 @@ const AdminProducts = () => {
     setFormData({ ...formData, images: newImages.length > 0 ? newImages : [''] });
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type. Please upload JPG, PNG, WebP, or GIF.');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size exceeds 5MB limit');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const response = await axios.post(`${API_URL}/admin/upload-image`, formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      // Add the uploaded image URL to the images array
+      const newImages = [...formData.images.filter(img => img.trim()), response.data.url];
+      setFormData({ ...formData, images: newImages });
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to upload image');
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const toggleSize = (size) => {
     const newSizes = formData.sizes.includes(size)
       ? formData.sizes.filter(s => s !== size)
