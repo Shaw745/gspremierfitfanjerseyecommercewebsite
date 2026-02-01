@@ -382,6 +382,7 @@ const HomePage = () => {
                 <Button
                   size="lg"
                   variant="outline"
+                  onClick={() => setVideoModalOpen(true)}
                   className="border-white text-white hover:bg-white hover:text-[#050505] font-semibold uppercase tracking-wider px-8 py-6 text-sm md:text-base rounded-none transition-all"
                   data-testid="watch-video-btn"
                 >
