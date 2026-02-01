@@ -160,3 +160,25 @@ The "Made with Emergent" badge visible in screenshots is a platform-level waterm
   - Visible navbar (no longer obscured)
   - Responsive for all screen sizes
   - Mouse-tracking 3D jersey animation
+
+
+## Upcoming Tasks (Prioritized)
+
+### P0 - High Priority
+- Product detail page: video support for product media gallery
+- End-to-end testing of product reviews frontend integration
+
+### P1 - Medium Priority
+- Wishlist sharing feature (public link generation)
+- Limited Drops countdown + email notification signup
+- Size recommendation based on past orders
+
+### P2 - Lower Priority
+- Replace "Our Story" section image with model from product gallery
+- Fix React Hook useEffect dependency warnings
+- Refactor server.py into modular structure (routes, models, services)
+
+## Known Technical Debt
+- server.py is monolithic (1000+ lines) - needs modularization
+- Several useEffect dependency warnings in frontend console
+- Some backend features (reviews, tracking emails) need complete frontend testing
