@@ -892,6 +892,8 @@ async def create_order(order_data: OrderCreate, current_user: dict = Depends(get
         "order_id": order_id,
         "reference": reference,
         "total": total,
+        "status": order_status,
+        "payment_status": payment_status,
         "payment_method": order_data.payment_method,
         "payment_info": payment_info
     }
