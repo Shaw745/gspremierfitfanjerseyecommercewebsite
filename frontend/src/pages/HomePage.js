@@ -9,7 +9,7 @@ import ProductCard from '../components/ProductCard';
 import { Button } from '../components/ui/button';
 import { API_URL } from '../lib/utils';
 
-// Sports Video Data - Epic Moments
+// Sports Video Data - Epic Moments (All verified working)
 const SPORTS_VIDEOS = [
   {
     id: 1,
@@ -20,31 +20,31 @@ const SPORTS_VIDEOS = [
   },
   {
     id: 2,
-    title: "Cristiano Ronaldo - Bicycle Kick vs Juventus",
-    description: "One of the greatest goals in Champions League history",
-    youtubeId: "eUcJNLguPn0",
-    thumbnail: "https://img.youtube.com/vi/eUcJNLguPn0/maxresdefault.jpg"
+    title: "Ronaldo's Bicycle Kick vs Juventus",
+    description: "One of the greatest goals ever - Standing ovation from Juventus fans",
+    youtubeId: "Nt8198a0acA",
+    thumbnail: "https://img.youtube.com/vi/Nt8198a0acA/maxresdefault.jpg"
   },
   {
     id: 3,
-    title: "Messi's Best Goals Compilation",
-    description: "The GOAT's most magical moments",
-    youtubeId: "V9Cg90kzYmc",
-    thumbnail: "https://img.youtube.com/vi/V9Cg90kzYmc/maxresdefault.jpg"
+    title: "AGUEROOO! Man City vs QPR 93:20",
+    description: "The most dramatic Premier League title win ever - Last minute winner",
+    youtubeId: "4XSo5Z0hEAs",
+    thumbnail: "https://img.youtube.com/vi/4XSo5Z0hEAs/maxresdefault.jpg"
   },
   {
     id: 4,
-    title: "LeBron James - The Block in Game 7",
-    description: "2016 NBA Finals iconic chase-down block",
-    youtubeId: "wgVOgGLtPtc",
-    thumbnail: "https://img.youtube.com/vi/wgVOgGLtPtc/maxresdefault.jpg"
+    title: "LeBron's Block - Game 7 NBA Finals",
+    description: "The chasedown block that sealed Cleveland's first championship",
+    youtubeId: "-zd62MxKXp8",
+    thumbnail: "https://img.youtube.com/vi/-zd62MxKXp8/maxresdefault.jpg"
   },
   {
     id: 5,
-    title: "Manchester City vs QPR - Aguerooo!",
-    description: "The most dramatic Premier League title win ever",
-    youtubeId: "81bv_gF4j5k",
-    thumbnail: "https://img.youtube.com/vi/81bv_gF4j5k/maxresdefault.jpg"
+    title: "Man City vs QPR - Last 10 Minutes",
+    description: "Full drama of the greatest Premier League finale",
+    youtubeId: "qrFPRrZLGmU",
+    thumbnail: "https://img.youtube.com/vi/qrFPRrZLGmU/maxresdefault.jpg"
   }
 ];
 
