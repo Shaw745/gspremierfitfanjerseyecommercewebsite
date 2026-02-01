@@ -484,13 +484,78 @@ const AdminProducts = () => {
 
             <div>
               <Label>Images</Label>
-              <div className="space-y-2 mt-2">
+              
+              {/* File Upload Section */}
+              <div className="mt-2 mb-4">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  data-testid="image-file-input"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="w-full border-dashed border-2 h-20 flex flex-col items-center justify-center gap-2"
+                  data-testid="upload-image-btn"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span className="text-sm">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5" />
+                      <span className="text-sm">Click to upload image (JPG, PNG, WebP - max 5MB)</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Image Previews */}
+              {formData.images.filter(img => img.trim()).length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {formData.images.filter(img => img.trim()).map((image, index) => (
+                    <div key={index} className="relative group aspect-square bg-neutral-100 rounded overflow-hidden">
+                      <img
+                        src={image.startsWith('/uploads') ? `${API_URL.replace('/api', '')}${image}` : image}
+                        alt={`Product ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/100?text=Error';
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImageField(formData.images.indexOf(image))}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        data-testid={`remove-image-${index}`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* URL Input Section */}
+              <div className="space-y-2">
+                <p className="text-xs text-neutral-500 flex items-center gap-1">
+                  <ImageIcon className="w-3 h-3" />
+                  Or add image URL manually:
+                </p>
                 {formData.images.map((image, index) => (
                   <div key={index} className="flex gap-2">
                     <Input
                       value={image}
                       onChange={(e) => handleImageChange(index, e.target.value)}
                       placeholder="Image URL"
+                      data-testid={`image-url-input-${index}`}
                     />
                     <Button
                       type="button"
@@ -503,7 +568,7 @@ const AdminProducts = () => {
                   </div>
                 ))}
                 <Button type="button" variant="outline" size="sm" onClick={addImageField}>
-                  <Plus className="w-4 h-4 mr-2" /> Add Image
+                  <Plus className="w-4 h-4 mr-2" /> Add Image URL
                 </Button>
               </div>
             </div>
