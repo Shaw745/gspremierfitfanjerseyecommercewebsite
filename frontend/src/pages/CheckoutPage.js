@@ -571,11 +571,19 @@ const CheckoutPage = () => {
 
                   <Button
                     size="lg"
-                    className="w-full mt-8 bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider"
+                    className="w-full mt-8 bg-[#CCFF00] text-[#050505] hover:bg-[#b8e600] font-semibold uppercase tracking-wider disabled:opacity-50"
                     onClick={handleConfirmPayment}
+                    disabled={confirmingPayment}
                     data-testid="confirm-payment-btn"
                   >
-                    I've Made the Payment
+                    {confirmingPayment ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                        Submitting...
+                      </>
+                    ) : (
+                      "I've Made the Payment"
+                    )}
                   </Button>
                 </motion.div>
               )}
@@ -587,7 +595,7 @@ const CheckoutPage = () => {
                     <Check className="w-10 h-10 text-[#050505]" />
                   </div>
                   <h2 className="text-3xl font-bold uppercase tracking-tight mb-4" data-testid="order-success-title">
-                    Order Placed Successfully!
+                    Order Submitted!
                   </h2>
                   <p className="text-neutral-600 mb-8 max-w-md mx-auto">
                     Thank you for your order. We'll send you an email confirmation with order details shortly.
