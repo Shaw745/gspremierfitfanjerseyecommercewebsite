@@ -45,6 +45,7 @@ COINGECKO_API_KEY = os.environ.get('COINGECKO_API_KEY', '')
 # Resend Email
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@gspremierfitfan.com')
 resend.api_key = RESEND_API_KEY
 
 # Crypto Wallets
