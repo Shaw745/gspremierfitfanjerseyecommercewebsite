@@ -33,6 +33,7 @@ const AdminProducts = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [newColor, setNewColor] = useState(''); // For custom color input
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -41,7 +42,7 @@ const AdminProducts = () => {
     category: 'jerseys',
     sport: 'Football',
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: ['Black', 'White'],
+    colors: [], // Empty by default - fully customizable
     images: [''],
     stock: '',
     featured: false,
