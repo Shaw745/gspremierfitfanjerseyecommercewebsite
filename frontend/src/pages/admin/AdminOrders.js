@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Eye, Truck, Package } from 'lucide-react';
+import { Search, Eye, Truck, Package, CheckCircle, Clock, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import AdminLayout from '../../components/AdminLayout';
 import { Button } from '../../components/ui/button';
@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmingPayment, setConfirmingPayment] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
