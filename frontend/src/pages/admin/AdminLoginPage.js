@@ -106,7 +106,7 @@ const AdminLoginPage = () => {
         </form>
 
         <p className="text-center text-neutral-500 text-sm mt-8">
-          Default: admin@gspremierfitfan.com / admin123
+          Protected admin area
         </p>
       </motion.div>
     </div>
