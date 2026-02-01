@@ -195,9 +195,10 @@ const AdminProducts = () => {
         </Button>
       </div>
 
-      {/* Products Table */}
+      {/* Products Table - Responsive wrapper */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden" data-testid="products-table">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[700px]">
           <thead className="bg-neutral-50">
             <tr>
               <th className="text-left p-4 font-semibold text-sm">Product</th>
@@ -284,6 +285,7 @@ const AdminProducts = () => {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Add/Edit Product Dialog */}
