@@ -526,7 +526,7 @@ const AdminProducts = () => {
                   {formData.images.filter(img => img.trim()).map((image, index) => (
                     <div key={index} className="relative group aspect-square bg-neutral-100 rounded overflow-hidden">
                       <img
-                        src={image.startsWith('/uploads') ? `${API_URL.replace('/api', '')}${image}` : image}
+                        src={getImageUrl(image)}
                         alt={`Product ${index + 1}`}
                         className="w-full h-full object-cover"
                         onError={(e) => {
