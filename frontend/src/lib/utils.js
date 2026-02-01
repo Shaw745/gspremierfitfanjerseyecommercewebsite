@@ -36,9 +36,14 @@ export function getImageUrl(imagePath) {
     return imagePath;
   }
   
-  // If it's a relative path (starts with /uploads), prepend the base URL
-  if (imagePath.startsWith('/uploads')) {
+  // If it's a relative path with /api/uploads, prepend the base URL
+  if (imagePath.startsWith('/api/uploads')) {
     return `${BASE_URL}${imagePath}`;
+  }
+  
+  // Legacy: If it's old /uploads path (without /api), convert to new format
+  if (imagePath.startsWith('/uploads')) {
+    return `${BASE_URL}/api${imagePath}`;
   }
   
   // Otherwise return as-is
