@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
-import { formatPrice, API_URL } from '../../lib/utils';
+import { formatPrice, API_URL, getImageUrl } from '../../lib/utils';
 import { toast } from 'sonner';
 
 const AdminProducts = () => {
