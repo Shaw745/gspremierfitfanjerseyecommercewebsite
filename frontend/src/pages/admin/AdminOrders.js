@@ -127,8 +127,33 @@ const AdminOrders = () => {
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'awaiting_payment': return 'bg-orange-100 text-orange-800';
       case 'failed': return 'bg-red-100 text-red-800';
       default: return 'bg-neutral-100 text-neutral-800';
+    }
+  };
+
+  const formatPaymentStatus = (status) => {
+    switch (status) {
+      case 'awaiting_payment': return 'Awaiting Payment';
+      case 'pending': return 'Pending';
+      case 'paid': return 'Paid';
+      case 'failed': return 'Failed';
+      default: return status;
+    }
+  };
+
+  const formatOrderStatus = (status) => {
+    switch (status) {
+      case 'pending_payment': return 'Pending Payment';
+      case 'pending': return 'Pending';
+      case 'processing': return 'Processing';
+      case 'confirmed': return 'Confirmed';
+      case 'shipped': return 'Shipped';
+      case 'out_for_delivery': return 'Out for Delivery';
+      case 'delivered': return 'Delivered';
+      case 'cancelled': return 'Cancelled';
+      default: return status;
     }
   };
 
