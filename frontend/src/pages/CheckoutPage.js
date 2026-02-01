@@ -183,15 +183,24 @@ const CheckoutPage = () => {
       };
 
       const response = await axios.post(`${API_URL}/orders`, orderData);
-      const { order_id, reference, payment_info, payment_method } = response.data;
+      const { order_id, reference, payment_info, payment_method, total, status, payment_status } = response.data;
 
       localStorage.setItem('pending_order_id', order_id);
-      setOrderResult({ order_id, reference, payment_info, payment_method });
-      setStep(3);
-
-      // Redirect to Paystack if selected
-      if (payment_method === 'paystack' && payment_info?.authorization_url) {
+      setOrderResult({ order_id, reference, payment_info, payment_method, total, status, payment_status });
+      
+      // For bank transfer and crypto, go directly to step 4 (pending confirmation page)
+      // For paystack, go to step 3 to handle redirect
+      if (payment_method === 'bank_transfer' || payment_method?.startsWith('crypto_')) {
+        clearCart(); // Clear cart for bank transfer
+        setStep(4); // Go directly to pending payment confirmation
+      } else if (payment_method === 'paystack' && payment_info?.authorization_url) {
+        // Redirect to Paystack
         window.location.href = payment_info.authorization_url;
+      } else if (payment_method === 'paystack' && payment_info?.error) {
+        // Paystack failed, show error
+        setStep(3);
+      } else {
+        setStep(3);
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create order');
