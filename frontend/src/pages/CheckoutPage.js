@@ -168,8 +168,12 @@ const CheckoutPage = () => {
     setStep(2);
   };
 
+  const [processingOrder, setProcessingOrder] = useState(false);
+
   const handlePaymentSubmit = async () => {
     setLoading(true);
+    setProcessingOrder(true); // Show processing overlay
+    
     try {
       const orderData = {
         shipping_address: shippingForm,
@@ -188,22 +192,27 @@ const CheckoutPage = () => {
       localStorage.setItem('pending_order_id', order_id);
       setOrderResult({ order_id, reference, payment_info, payment_method, total, status, payment_status });
       
+      // Add delay to show processing state
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       // For bank transfer and crypto, go directly to step 4 (pending confirmation page)
-      // For paystack, go to step 3 to handle redirect
       if (payment_method === 'bank_transfer' || payment_method?.startsWith('crypto_')) {
-        clearCart(); // Clear cart for bank transfer
-        setStep(4); // Go directly to pending payment confirmation
+        clearCart();
+        setProcessingOrder(false);
+        setStep(4);
       } else if (payment_method === 'paystack' && payment_info?.authorization_url) {
         // Redirect to Paystack
         window.location.href = payment_info.authorization_url;
       } else if (payment_method === 'paystack' && payment_info?.error) {
-        // Paystack failed, show error
+        setProcessingOrder(false);
         setStep(3);
       } else {
+        setProcessingOrder(false);
         setStep(3);
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create order');
+      setProcessingOrder(false);
     } finally {
       setLoading(false);
     }
