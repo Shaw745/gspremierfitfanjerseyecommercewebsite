@@ -606,42 +606,149 @@ const CheckoutPage = () => {
                 </motion.div>
               )}
 
-              {/* Step 4: Success */}
-              {step === 4 && (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12">
-                  <div className="w-20 h-20 bg-[#CCFF00] rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Check className="w-10 h-10 text-[#050505]" />
-                  </div>
-                  <h2 className="text-3xl font-bold uppercase tracking-tight mb-4" data-testid="order-success-title">
-                    Order Submitted!
-                  </h2>
-                  
-                  {/* Order Reference */}
-                  {orderResult?.reference && (
-                    <div className="bg-neutral-100 inline-block px-6 py-3 rounded mb-6">
-                      <p className="text-sm text-neutral-500">Order Reference</p>
-                      <p className="font-mono font-bold text-lg">{orderResult.reference}</p>
+              {/* Step 4: Order Confirmation with Pending Payment */}
+              {step === 4 && orderResult && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-8">
+                  {/* Header */}
+                  <div className="text-center mb-8">
+                    <div className="w-20 h-20 bg-[#CCFF00] rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Clock className="w-10 h-10 text-[#050505]" />
                     </div>
-                  )}
-                  
-                  <div className="bg-yellow-50 border border-yellow-200 p-4 rounded max-w-md mx-auto mb-8">
-                    <p className="text-yellow-800 font-semibold mb-1">⏳ Payment Pending Verification</p>
-                    <p className="text-yellow-700 text-sm">
-                      Our team will verify your payment and update your order status. 
-                      You'll receive an email confirmation once verified.
-                    </p>
+                    <h2 className="text-3xl font-bold uppercase tracking-tight mb-2" data-testid="order-success-title">
+                      Order Received!
+                    </h2>
+                    <p className="text-neutral-600">Your order has been placed and is awaiting payment confirmation.</p>
                   </div>
-                  
-                  <p className="text-neutral-600 mb-8 max-w-md mx-auto">
-                    Thank you for your order! Keep your order reference safe for tracking.
-                  </p>
+
+                  {/* Order Details Card */}
+                  <div className="bg-white border-2 border-neutral-200 rounded-lg overflow-hidden mb-6">
+                    {/* Status Banner */}
+                    <div className="bg-orange-500 text-white p-4 text-center">
+                      <p className="font-bold text-lg uppercase tracking-wide">⏳ Awaiting Payment Verification</p>
+                    </div>
+                    
+                    <div className="p-6">
+                      {/* Order Reference & Total */}
+                      <div className="grid md:grid-cols-2 gap-6 mb-6">
+                        <div className="bg-neutral-100 p-4 rounded-lg text-center">
+                          <p className="text-sm text-neutral-500 uppercase tracking-wide mb-1">Order Reference</p>
+                          <p className="font-mono font-bold text-2xl text-[#050505]">{orderResult.reference}</p>
+                        </div>
+                        <div className="bg-[#050505] p-4 rounded-lg text-center">
+                          <p className="text-sm text-neutral-400 uppercase tracking-wide mb-1">Amount Due</p>
+                          <p className="font-bold text-2xl text-[#CCFF00]">{formatPrice(orderResult.total)}</p>
+                        </div>
+                      </div>
+
+                      {/* Bank Transfer Instructions */}
+                      {orderResult.payment_method === 'bank_transfer' && orderResult.payment_info && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                          <h3 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
+                            <Package className="w-5 h-5" />
+                            Bank Transfer Instructions
+                          </h3>
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-center p-3 bg-white rounded border">
+                              <div>
+                                <p className="text-xs text-neutral-500">Bank Name</p>
+                                <p className="font-semibold">{orderResult.payment_info.bank_name}</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleCopy(orderResult.payment_info.bank_name, 'bank')}
+                              >
+                                {copied === 'bank' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                              </Button>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-white rounded border">
+                              <div>
+                                <p className="text-xs text-neutral-500">Account Number</p>
+                                <p className="font-mono font-bold text-lg">{orderResult.payment_info.account_number}</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleCopy(orderResult.payment_info.account_number, 'account')}
+                              >
+                                {copied === 'account' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                              </Button>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-white rounded border">
+                              <div>
+                                <p className="text-xs text-neutral-500">Account Name</p>
+                                <p className="font-semibold">{orderResult.payment_info.account_name}</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleCopy(orderResult.payment_info.account_name, 'name')}
+                              >
+                                {copied === 'name' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                              </Button>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-[#CCFF00]/20 rounded border border-[#CCFF00]">
+                              <div>
+                                <p className="text-xs text-neutral-500">Amount to Transfer</p>
+                                <p className="font-bold text-xl text-[#050505]">{formatPrice(orderResult.total)}</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleCopy(orderResult.total.toString(), 'amount')}
+                              >
+                                {copied === 'amount' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-blue-700 mt-4 p-3 bg-blue-100 rounded">
+                            <strong>Important:</strong> Use <span className="font-mono font-bold">{orderResult.reference}</span> as your payment reference/narration.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Crypto Payment Instructions */}
+                      {orderResult.payment_method?.startsWith('crypto_') && orderResult.payment_info && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-6">
+                          <h3 className="font-bold text-purple-900 mb-4">Cryptocurrency Payment</h3>
+                          <div className="bg-white p-4 rounded border mb-4">
+                            <p className="text-xs text-neutral-500 mb-1">Send to Wallet Address</p>
+                            <p className="font-mono text-sm break-all">{orderResult.payment_info.wallet_address}</p>
+                          </div>
+                          <p className="text-sm text-purple-700">
+                            Send the exact crypto amount shown and use order reference in memo if supported.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Important Notice */}
+                      <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+                        <h4 className="font-bold text-yellow-800 mb-2">📋 What happens next?</h4>
+                        <ol className="text-sm text-yellow-700 space-y-2 list-decimal list-inside">
+                          <li>Complete your bank transfer using the details above</li>
+                          <li>Our team will verify your payment (usually within 1-24 hours)</li>
+                          <li>You'll receive an email confirmation once payment is verified</li>
+                          <li>Your order will then be processed and shipped</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Track Order Info */}
+                  <div className="bg-neutral-100 rounded-lg p-6 text-center mb-6">
+                    <p className="text-neutral-600 mb-2">You can track your order status anytime in your account.</p>
+                    <p className="text-sm text-neutral-500">Order Reference: <span className="font-mono font-bold">{orderResult.reference}</span></p>
+                  </div>
+
+                  {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button
                       onClick={() => navigate('/account')}
                       className="bg-[#050505] hover:bg-[#1a1a1a] text-white font-semibold uppercase tracking-wider"
                       data-testid="view-orders-btn"
                     >
-                      View My Orders
+                      <Eye className="w-4 h-4 mr-2" />
+                      Track My Order
                     </Button>
                     <Button
                       variant="outline"
