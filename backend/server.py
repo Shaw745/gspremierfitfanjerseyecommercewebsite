@@ -136,13 +136,13 @@ class CartItem(BaseModel):
     product_id: str
     quantity: int
     size: str
-    color: str
+    color: Optional[str] = None
 
 class AddToCart(BaseModel):
     product_id: str
     quantity: int = 1
     size: str
-    color: str
+    color: Optional[str] = None
 
 class ShippingAddress(BaseModel):
     full_name: str
