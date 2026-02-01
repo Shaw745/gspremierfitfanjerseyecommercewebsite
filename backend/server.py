@@ -1061,6 +1061,119 @@ async def admin_update_order(order_id: str, update: OrderStatusUpdate, admin: di
     
     return {"message": "Order updated"}
 
+@api_router.post("/admin/orders/{order_id}/confirm-payment")
+async def admin_confirm_payment(order_id: str, admin: dict = Depends(get_admin_user)):
+    """Admin confirms payment for bank transfer or crypto orders"""
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Check if payment is awaiting confirmation
+    if order.get("payment_status") not in ["awaiting_payment", "pending"]:
+        raise HTTPException(status_code=400, detail="Payment already processed")
+    
+    # Update order status
+    update_data = {
+        "payment_status": "paid",
+        "status": "processing",
+        "payment_confirmed_at": datetime.now(timezone.utc).isoformat(),
+        "payment_confirmed_by": admin["email"],
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Add to tracking history
+    tracking_event = {
+        "status": "payment_confirmed",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "description": "Payment confirmed by admin"
+    }
+    
+    await db.orders.update_one(
+        {"id": order_id},
+        {
+            "$set": update_data,
+            "$push": {"tracking_history": tracking_event}
+        }
+    )
+    
+    # Send payment confirmation email to customer
+    asyncio.create_task(send_payment_confirmed_email(order))
+    
+    return {"message": "Payment confirmed successfully"}
+
+async def send_payment_confirmed_email(order: dict):
+    """Send payment confirmation email to customer"""
+    if not RESEND_API_KEY:
+        return
+    
+    customer_email = order.get("user_email")
+    if not customer_email:
+        return
+    
+    items_html = ""
+    for item in order.get("items", []):
+        items_html += f"""
+        <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('product_name', 'Product')}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('quantity', 1)}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">₦{item.get('item_total', 0):,.0f}</td>
+        </tr>
+        """
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: #050505; padding: 30px; text-align: center;">
+            <h1 style="color: #CCFF00; margin: 0;">✅ Payment Confirmed!</h1>
+        </div>
+        <div style="padding: 30px;">
+            <div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+                <p style="color: #155724; margin: 0; font-weight: bold;">Great news! Your payment has been verified.</p>
+            </div>
+            
+            <p>Dear Customer,</p>
+            <p>We've confirmed your payment for order <strong>{order.get('reference', 'N/A')}</strong>.</p>
+            <p>Your order is now being processed and will be shipped soon.</p>
+            
+            <div style="background: #f9f9f9; padding: 15px; margin: 20px 0;">
+                <h3 style="margin-top: 0;">Order Summary</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #050505; color: #fff;">
+                            <th style="padding: 10px; text-align: left;">Product</th>
+                            <th style="padding: 10px; text-align: left;">Qty</th>
+                            <th style="padding: 10px; text-align: left;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items_html}
+                    </tbody>
+                </table>
+                <p style="text-align: right; font-size: 18px; font-weight: bold; margin-top: 15px;">
+                    Total Paid: ₦{order.get('total', 0):,.0f}
+                </p>
+            </div>
+            
+            <p>We'll send you another email with tracking information once your order ships.</p>
+            <p>Thank you for shopping with Gs Premier!</p>
+        </div>
+        <div style="background: #050505; padding: 20px; text-align: center;">
+            <p style="color: #999; margin: 0; font-size: 12px;">© 2024 Gs Premier Fit Fan</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [customer_email],
+            "subject": f"✅ Payment Confirmed - Order {order.get('reference', 'N/A')}",
+            "html": html_content
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Payment confirmation email sent to {customer_email}")
+    except Exception as e:
+        logger.error(f"Failed to send payment confirmation email: {str(e)}")
+
 @api_router.get("/orders/{order_id}/tracking")
 async def get_order_tracking(order_id: str, current_user: dict = Depends(get_current_user)):
     order = await db.orders.find_one(
