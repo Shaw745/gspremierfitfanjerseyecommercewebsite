@@ -455,6 +455,39 @@ const CheckoutPage = () => {
                     <p className="font-mono font-bold text-lg">{orderResult.reference}</p>
                   </div>
 
+                  {/* Paystack Error Message */}
+                  {orderResult.payment_method === 'paystack' && orderResult.payment_info?.error && (
+                    <div className="bg-red-50 border border-red-200 p-6 mb-6 rounded" data-testid="paystack-error">
+                      <h3 className="font-semibold text-red-700 mb-2">Payment Gateway Issue</h3>
+                      <p className="text-red-600 mb-4">
+                        We couldn't connect to the card payment system. Please use bank transfer or cryptocurrency instead.
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={() => setStep(2)}
+                        className="border-red-300 text-red-700 hover:bg-red-100"
+                      >
+                        Choose Another Payment Method
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Paystack Redirect Info */}
+                  {orderResult.payment_method === 'paystack' && orderResult.payment_info?.authorization_url && (
+                    <div className="bg-blue-50 border border-blue-200 p-6 mb-6 rounded" data-testid="paystack-redirect">
+                      <h3 className="font-semibold text-blue-700 mb-2">Redirecting to Payment...</h3>
+                      <p className="text-blue-600 mb-4">
+                        You will be redirected to Paystack to complete your card payment.
+                      </p>
+                      <Button
+                        onClick={() => window.location.href = orderResult.payment_info.authorization_url}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Proceed to Payment
+                      </Button>
+                    </div>
+                  )}
+
                   {orderResult.payment_method === 'bank_transfer' && (
                     <div className="space-y-4" data-testid="bank-transfer-details">
                       <h3 className="font-semibold">Bank Transfer Details</h3>
