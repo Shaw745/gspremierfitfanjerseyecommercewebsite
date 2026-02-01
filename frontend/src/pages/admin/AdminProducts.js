@@ -482,23 +482,54 @@ const AdminProducts = () => {
             </div>
 
             <div>
-              <Label>Colors</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {allColors.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => toggleColor(color)}
-                    className={`px-4 py-2 border font-semibold text-sm ${
-                      formData.colors.includes(color)
-                        ? 'bg-[#050505] text-white border-[#050505]'
-                        : 'bg-white text-[#050505] border-neutral-300'
-                    }`}
-                  >
-                    {color}
-                  </button>
-                ))}
+              <Label>Colors <span className="text-neutral-400 font-normal">(Optional)</span></Label>
+              <p className="text-xs text-neutral-500 mb-2">Add custom colors for this product. Leave empty if no color variations.</p>
+              
+              {/* Custom Color Input */}
+              <div className="flex gap-2 mb-3">
+                <Input
+                  value={newColor}
+                  onChange={(e) => setNewColor(e.target.value)}
+                  onKeyPress={handleColorKeyPress}
+                  placeholder="Enter color name (e.g., Royal Blue, Lime Green)"
+                  className="flex-1"
+                  data-testid="custom-color-input"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addCustomColor}
+                  disabled={!newColor.trim()}
+                  data-testid="add-color-btn"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
               </div>
+
+              {/* Added Colors */}
+              {formData.colors.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {formData.colors.map((color) => (
+                    <div
+                      key={color}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-neutral-100 rounded-full text-sm"
+                    >
+                      <span>{color}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeColor(color)}
+                        className="ml-1 text-neutral-400 hover:text-red-500 transition-colors"
+                        data-testid={`remove-color-${color}`}
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-neutral-400 italic">No colors added. This product will show without color options.</p>
+              )}
             </div>
 
             <div>
