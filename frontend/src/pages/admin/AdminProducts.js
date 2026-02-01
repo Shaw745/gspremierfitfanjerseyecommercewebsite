@@ -91,12 +91,13 @@ const AdminProducts = () => {
         category: 'jerseys',
         sport: 'Football',
         sizes: ['S', 'M', 'L', 'XL'],
-        colors: ['Black', 'White'],
+        colors: [], // Empty by default - admin adds colors only when needed
         images: [''],
         stock: '',
         featured: false,
         collection: '',
       });
+      setNewColor(''); // Reset custom color input
     }
     setDialogOpen(true);
   };
