@@ -14,7 +14,7 @@ import { Progress } from '../components/ui/progress';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
-import { API_URL, formatPrice, formatDate } from '../lib/utils';
+import { API_URL, formatPrice, formatDate, getImageUrl } from '../lib/utils';
 import {
   Dialog,
   DialogContent,
