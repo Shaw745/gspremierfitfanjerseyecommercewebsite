@@ -280,6 +280,7 @@ const StatsSection = () => {
 
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -302,6 +303,13 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-white scroll-smooth overflow-x-hidden">
       <Navbar />
+      
+      {/* Video Modal */}
+      <VideoModal 
+        isOpen={videoModalOpen} 
+        onClose={() => setVideoModalOpen(false)} 
+        videos={SPORTS_VIDEOS}
+      />
 
       {/* Hero Section */}
       <section 
