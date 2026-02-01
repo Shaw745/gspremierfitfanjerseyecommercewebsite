@@ -183,13 +183,24 @@ const AccountPage = () => {
                         </div>
                         <div className="flex items-center gap-4">
                           <Badge className={getStatusColor(order.status)}>
-                            {order.status}
+                            {formatStatus(order.status)}
                           </Badge>
-                          <Badge className={order.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                            {order.payment_status}
+                          <Badge className={getPaymentStatusColor(order.payment_status)}>
+                            {formatStatus(order.payment_status)}
                           </Badge>
                         </div>
                       </div>
+                      
+                      {/* Pending Payment Notice */}
+                      {(order.payment_status === 'awaiting_payment' || order.status === 'pending_payment') && (
+                        <div className="bg-orange-50 border border-orange-200 p-4 rounded mb-4">
+                          <p className="text-orange-800 font-semibold text-sm">⏳ Payment Awaiting Verification</p>
+                          <p className="text-orange-700 text-sm">
+                            Your payment is being verified by our team. You'll receive an email confirmation once your payment is confirmed.
+                          </p>
+                        </div>
+                      )}
+                      
                       <div className="flex flex-wrap gap-4 mb-4">
                         {order.items?.slice(0, 3).map((item, idx) => (
                           <div key={idx} className="flex gap-3">
