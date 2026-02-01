@@ -54,11 +54,34 @@ const AccountPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800';
+      case 'processing': return 'bg-blue-100 text-blue-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'shipped': return 'bg-blue-100 text-blue-800';
+      case 'pending_payment': return 'bg-orange-100 text-orange-800';
+      case 'shipped': return 'bg-indigo-100 text-indigo-800';
+      case 'out_for_delivery': return 'bg-purple-100 text-purple-800';
       case 'delivered': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-neutral-100 text-neutral-800';
+    }
+  };
+
+  const getPaymentStatusColor = (status) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'awaiting_payment': return 'bg-orange-100 text-orange-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      default: return 'bg-neutral-100 text-neutral-800';
+    }
+  };
+
+  const formatStatus = (status) => {
+    switch (status) {
+      case 'pending_payment': return 'Pending Payment';
+      case 'awaiting_payment': return 'Awaiting Payment';
+      case 'processing': return 'Processing';
+      case 'out_for_delivery': return 'Out for Delivery';
+      default: return status?.charAt(0).toUpperCase() + status?.slice(1);
     }
   };
 
