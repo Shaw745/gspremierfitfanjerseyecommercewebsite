@@ -13,10 +13,10 @@ import { API_URL } from '../lib/utils';
 const SPORTS_VIDEOS = [
   {
     id: 1,
-    title: "Benevento GK Brignoli Scores vs AC Milan",
-    description: "Historic 95th minute header - Goalkeeper scores to earn first Serie A point!",
-    youtubeId: "uYS1rmDVptg",
-    thumbnail: "https://img.youtube.com/vi/uYS1rmDVptg/maxresdefault.jpg"
+    title: "Benfica GK Trubin Scores vs Real Madrid!",
+    description: "98th minute header knocks Real Madrid out of Champions League - Jan 2026",
+    youtubeId: "K64czXu2OuA",
+    thumbnail: "https://img.youtube.com/vi/K64czXu2OuA/maxresdefault.jpg"
   },
   {
     id: 2,
