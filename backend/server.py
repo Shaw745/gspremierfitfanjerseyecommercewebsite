@@ -785,6 +785,15 @@ async def create_order(order_data: OrderCreate, current_user: dict = Depends(get
     order_id = str(uuid.uuid4())
     reference = f"GSP-{uuid.uuid4().hex[:8].upper()}"
     
+    # Determine initial payment status based on payment method
+    # Bank transfer and crypto require manual verification
+    if order_data.payment_method in ["bank_transfer"] or order_data.payment_method.startswith("crypto_"):
+        payment_status = "awaiting_payment"
+        order_status = "pending_payment"
+    else:
+        payment_status = "pending"
+        order_status = "pending"
+    
     order = {
         "id": order_id,
         "reference": reference,
@@ -796,8 +805,8 @@ async def create_order(order_data: OrderCreate, current_user: dict = Depends(get
         "subtotal": total,
         "shipping_fee": 0,
         "total": total,
-        "status": "pending",
-        "payment_status": "pending",
+        "status": order_status,
+        "payment_status": payment_status,
         "notes": order_data.notes,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
