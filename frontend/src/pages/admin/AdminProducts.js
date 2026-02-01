@@ -201,11 +201,26 @@ const AdminProducts = () => {
     setFormData({ ...formData, sizes: newSizes });
   };
 
-  const toggleColor = (color) => {
-    const newColors = formData.colors.includes(color)
-      ? formData.colors.filter(c => c !== color)
-      : [...formData.colors, color];
-    setFormData({ ...formData, colors: newColors });
+  const addCustomColor = () => {
+    const colorName = newColor.trim();
+    if (colorName && !formData.colors.includes(colorName)) {
+      setFormData({ ...formData, colors: [...formData.colors, colorName] });
+      setNewColor('');
+    }
+  };
+
+  const removeColor = (colorToRemove) => {
+    setFormData({ 
+      ...formData, 
+      colors: formData.colors.filter(c => c !== colorToRemove) 
+    });
+  };
+
+  const handleColorKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustomColor();
+    }
   };
 
   const filteredProducts = products.filter(p =>
@@ -214,7 +229,6 @@ const AdminProducts = () => {
   );
 
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  const allColors = ['Black', 'White', 'Red', 'Navy', 'Yellow', 'Neon Green', 'Orange', 'Blue'];
 
   return (
     <AdminLayout title="Products">
