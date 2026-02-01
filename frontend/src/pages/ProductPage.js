@@ -331,30 +331,32 @@ const ProductPage = () => {
                   {product.description}
                 </p>
 
-                {/* Color Selection */}
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-semibold uppercase tracking-wider text-sm">
-                      Color: <span className="font-normal normal-case">{selectedColor}</span>
-                    </span>
+                {/* Color Selection - Only show if product has colors */}
+                {product.colors?.length > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-semibold uppercase tracking-wider text-sm">
+                        Color: <span className="font-normal normal-case">{selectedColor}</span>
+                      </span>
+                    </div>
+                    <div className="flex gap-3">
+                      {product.colors.map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${selectedColor === color ? 'border-[#050505]' : 'border-neutral-300'}`}
+                          style={{ backgroundColor: getColorHex(color) }}
+                          title={color}
+                          data-testid={`color-${color.toLowerCase().replace(' ', '-')}`}
+                        >
+                          {selectedColor === color && (
+                            <Check className={`w-5 h-5 ${color.toLowerCase() === 'white' || color.toLowerCase() === 'yellow' ? 'text-[#050505]' : 'text-white'}`} />
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex gap-3">
-                    {product.colors?.map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${selectedColor === color ? 'border-[#050505]' : 'border-neutral-300'}`}
-                        style={{ backgroundColor: getColorHex(color) }}
-                        title={color}
-                        data-testid={`color-${color.toLowerCase().replace(' ', '-')}`}
-                      >
-                        {selectedColor === color && (
-                          <Check className={`w-5 h-5 ${color.toLowerCase() === 'white' || color.toLowerCase() === 'yellow' ? 'text-[#050505]' : 'text-white'}`} />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                )}
 
                 {/* Size Selection */}
                 <div className="mb-6">
