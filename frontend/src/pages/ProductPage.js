@@ -266,10 +266,13 @@ const ProductPage = () => {
                 className="aspect-square bg-neutral-100 overflow-hidden"
               >
                 <img
-                  src={product.images?.[selectedImage] || 'https://via.placeholder.com/600'}
+                  src={getImageUrl(product.images?.[selectedImage])}
                   alt={product.name}
                   className="w-full h-full object-cover"
                   data-testid="product-main-image"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/600?text=No+Image';
+                  }}
                 />
               </motion.div>
               {product.images?.length > 1 && (
@@ -281,7 +284,14 @@ const ProductPage = () => {
                       className={`w-20 h-20 border-2 overflow-hidden ${selectedImage === index ? 'border-[#050505]' : 'border-transparent'}`}
                       data-testid={`product-thumbnail-${index}`}
                     >
-                      <img src={image} alt="" className="w-full h-full object-cover" />
+                      <img 
+                        src={getImageUrl(image)} 
+                        alt="" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/100?text=No+Image';
+                        }}
+                      />
                     </button>
                   ))}
                 </div>
