@@ -1,13 +1,190 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Play, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { Button } from '../components/ui/button';
 import { API_URL } from '../lib/utils';
+
+// Sports Video Data - Epic Moments
+const SPORTS_VIDEOS = [
+  {
+    id: 1,
+    title: "Benevento GK Alberto Brignoli scores vs Real Madrid",
+    description: "Historic moment: Goalkeeper scores header in 95th minute!",
+    youtubeId: "jKPEDmcYlvY",
+    thumbnail: "https://img.youtube.com/vi/jKPEDmcYlvY/maxresdefault.jpg"
+  },
+  {
+    id: 2,
+    title: "Cristiano Ronaldo - Bicycle Kick vs Juventus",
+    description: "One of the greatest goals in Champions League history",
+    youtubeId: "3O-gT4oVq1g",
+    thumbnail: "https://img.youtube.com/vi/3O-gT4oVq1g/maxresdefault.jpg"
+  },
+  {
+    id: 3,
+    title: "Messi's Solo Goal vs Getafe",
+    description: "Maradona-like run from halfway line",
+    youtubeId: "5VMil0kiVaw",
+    thumbnail: "https://img.youtube.com/vi/5VMil0kiVaw/maxresdefault.jpg"
+  },
+  {
+    id: 4,
+    title: "LeBron James - The Block",
+    description: "2016 NBA Finals Game 7 chase-down block",
+    youtubeId: "wgVOgGLtPtc",
+    thumbnail: "https://img.youtube.com/vi/wgVOgGLtPtc/maxresdefault.jpg"
+  },
+  {
+    id: 5,
+    title: "Usain Bolt - 100m World Record",
+    description: "9.58 seconds - The fastest man ever",
+    youtubeId: "3nbjhpcZ9_g",
+    thumbnail: "https://img.youtube.com/vi/3nbjhpcZ9_g/maxresdefault.jpg"
+  }
+];
+
+// Video Modal Component
+const VideoModal = ({ isOpen, onClose, videos }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  
+  const nextVideo = () => {
+    setCurrentIndex((prev) => (prev + 1) % videos.length);
+  };
+  
+  const prevVideo = () => {
+    setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') nextVideo();
+      if (e.key === 'ArrowLeft') prevVideo();
+    };
+    
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const currentVideo = videos[currentIndex];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
+        onClick={onClose}
+        data-testid="video-modal"
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          className="relative w-full max-w-5xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute -top-12 right-0 text-white hover:text-[#CCFF00] transition-colors"
+            data-testid="close-video-modal"
+          >
+            <X className="w-8 h-8" />
+          </button>
+
+          {/* Video Player */}
+          <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+            <iframe
+              src={`https://www.youtube.com/embed/${currentVideo.youtubeId}?autoplay=1&rel=0`}
+              title={currentVideo.title}
+              className="absolute inset-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+
+          {/* Video Info */}
+          <div className="mt-4 text-white">
+            <h3 className="text-xl md:text-2xl font-bold">{currentVideo.title}</h3>
+            <p className="text-neutral-400 mt-1">{currentVideo.description}</p>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between mt-6">
+            <button
+              onClick={prevVideo}
+              className="flex items-center gap-2 text-white hover:text-[#CCFF00] transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              Previous
+            </button>
+            
+            <div className="flex gap-2">
+              {videos.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    idx === currentIndex ? 'bg-[#CCFF00]' : 'bg-neutral-600 hover:bg-neutral-400'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={nextVideo}
+              className="flex items-center gap-2 text-white hover:text-[#CCFF00] transition-colors"
+            >
+              Next
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Video Thumbnails */}
+          <div className="mt-6 grid grid-cols-5 gap-2">
+            {videos.map((video, idx) => (
+              <button
+                key={video.id}
+                onClick={() => setCurrentIndex(idx)}
+                className={`relative aspect-video rounded overflow-hidden border-2 transition-all ${
+                  idx === currentIndex ? 'border-[#CCFF00]' : 'border-transparent hover:border-white/50'
+                }`}
+              >
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                  }}
+                />
+                {idx === currentIndex && (
+                  <div className="absolute inset-0 bg-[#CCFF00]/20" />
+                )}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
 // Animated Counter Component
 const AnimatedCounter = ({ end, duration = 2, suffix = '', prefix = '' }) => {
