@@ -293,10 +293,15 @@ const CheckoutPage = () => {
                         <Input
                           id="full_name"
                           value={shippingForm.full_name}
-                          onChange={(e) => setShippingForm({ ...shippingForm, full_name: e.target.value })}
-                          required
+                          onChange={(e) => {
+                            setShippingForm({ ...shippingForm, full_name: e.target.value });
+                            if (formErrors.full_name) setFormErrors({ ...formErrors, full_name: '' });
+                          }}
+                          className={formErrors.full_name ? 'border-red-500' : ''}
+                          placeholder="Enter your full name"
                           data-testid="shipping-name-input"
                         />
+                        {formErrors.full_name && <p className="text-red-500 text-sm mt-1">{formErrors.full_name}</p>}
                       </div>
                       <div>
                         <Label htmlFor="email">Email *</Label>
@@ -304,31 +309,46 @@ const CheckoutPage = () => {
                           id="email"
                           type="email"
                           value={shippingForm.email}
-                          onChange={(e) => setShippingForm({ ...shippingForm, email: e.target.value })}
-                          required
+                          onChange={(e) => {
+                            setShippingForm({ ...shippingForm, email: e.target.value });
+                            if (formErrors.email) setFormErrors({ ...formErrors, email: '' });
+                          }}
+                          className={formErrors.email ? 'border-red-500' : ''}
+                          placeholder="your@email.com"
                           data-testid="shipping-email-input"
                         />
+                        {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="phone">Phone *</Label>
+                      <Label htmlFor="phone">Phone * <span className="text-neutral-400 text-xs font-normal">(e.g., +2348012345678)</span></Label>
                       <Input
                         id="phone"
                         value={shippingForm.phone}
-                        onChange={(e) => setShippingForm({ ...shippingForm, phone: e.target.value })}
-                        required
+                        onChange={(e) => {
+                          setShippingForm({ ...shippingForm, phone: e.target.value });
+                          if (formErrors.phone) setFormErrors({ ...formErrors, phone: '' });
+                        }}
+                        className={formErrors.phone ? 'border-red-500' : ''}
+                        placeholder="+2348012345678 or 08012345678"
                         data-testid="shipping-phone-input"
                       />
+                      {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
                     </div>
                     <div>
                       <Label htmlFor="address">Address *</Label>
                       <Input
                         id="address"
                         value={shippingForm.address}
-                        onChange={(e) => setShippingForm({ ...shippingForm, address: e.target.value })}
-                        required
+                        onChange={(e) => {
+                          setShippingForm({ ...shippingForm, address: e.target.value });
+                          if (formErrors.address) setFormErrors({ ...formErrors, address: '' });
+                        }}
+                        className={formErrors.address ? 'border-red-500' : ''}
+                        placeholder="Street address"
                         data-testid="shipping-address-input"
                       />
+                      {formErrors.address && <p className="text-red-500 text-sm mt-1">{formErrors.address}</p>}
                     </div>
                     <div className="grid md:grid-cols-3 gap-6">
                       <div>
@@ -336,20 +356,30 @@ const CheckoutPage = () => {
                         <Input
                           id="city"
                           value={shippingForm.city}
-                          onChange={(e) => setShippingForm({ ...shippingForm, city: e.target.value })}
-                          required
+                          onChange={(e) => {
+                            setShippingForm({ ...shippingForm, city: e.target.value });
+                            if (formErrors.city) setFormErrors({ ...formErrors, city: '' });
+                          }}
+                          className={formErrors.city ? 'border-red-500' : ''}
+                          placeholder="City"
                           data-testid="shipping-city-input"
                         />
+                        {formErrors.city && <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>}
                       </div>
                       <div>
                         <Label htmlFor="state">State *</Label>
                         <Input
                           id="state"
                           value={shippingForm.state}
-                          onChange={(e) => setShippingForm({ ...shippingForm, state: e.target.value })}
-                          required
+                          onChange={(e) => {
+                            setShippingForm({ ...shippingForm, state: e.target.value });
+                            if (formErrors.state) setFormErrors({ ...formErrors, state: '' });
+                          }}
+                          className={formErrors.state ? 'border-red-500' : ''}
+                          placeholder="State"
                           data-testid="shipping-state-input"
                         />
+                        {formErrors.state && <p className="text-red-500 text-sm mt-1">{formErrors.state}</p>}
                       </div>
                       <div>
                         <Label htmlFor="country">Country</Label>
