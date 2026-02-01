@@ -115,8 +115,16 @@ Build a premium, modern e-commerce website for an original sports jersey brand d
   - Removed default credentials display from login page
   - Shows "Protected admin area" instead
 
-### Note on "Emergent Logo"
-The "Made with Emergent" badge visible in screenshots is a platform-level watermark from the Emergent development environment, not part of the application code. It does not appear in production deployments.
+- ✅ **Branding Cleanup**
+  - Removed "Made with Emergent" badge from all pages
+  - Updated page title to "GS Premier | Premium Sports Jerseys"
+  - Updated meta description
+
+- ✅ **Watch Film Video Modal**
+  - Interactive video modal with 5 epic sports moments
+  - Features: Benevento GK Brignoli goal vs AC Milan (95th minute header!)
+  - Ronaldo bicycle kick, Messi highlights, LeBron's Block, Aguero moment
+  - YouTube embed with navigation, thumbnails, keyboard controls
 
 ## Latest Updates (Jan 30, 2026 - Session 2)
 
