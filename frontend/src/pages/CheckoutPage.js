@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CreditCard, Building2, Bitcoin, Copy, Check, ArrowRight, Loader2 } from 'lucide-react';
+import { CreditCard, Building2, Bitcoin, Copy, Check, ArrowRight, Loader2, Clock, Eye, Package } from 'lucide-react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
