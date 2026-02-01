@@ -597,8 +597,25 @@ const CheckoutPage = () => {
                   <h2 className="text-3xl font-bold uppercase tracking-tight mb-4" data-testid="order-success-title">
                     Order Submitted!
                   </h2>
+                  
+                  {/* Order Reference */}
+                  {orderResult?.reference && (
+                    <div className="bg-neutral-100 inline-block px-6 py-3 rounded mb-6">
+                      <p className="text-sm text-neutral-500">Order Reference</p>
+                      <p className="font-mono font-bold text-lg">{orderResult.reference}</p>
+                    </div>
+                  )}
+                  
+                  <div className="bg-yellow-50 border border-yellow-200 p-4 rounded max-w-md mx-auto mb-8">
+                    <p className="text-yellow-800 font-semibold mb-1">⏳ Payment Pending Verification</p>
+                    <p className="text-yellow-700 text-sm">
+                      Our team will verify your payment and update your order status. 
+                      You'll receive an email confirmation once verified.
+                    </p>
+                  </div>
+                  
                   <p className="text-neutral-600 mb-8 max-w-md mx-auto">
-                    Thank you for your order. We'll send you an email confirmation with order details shortly.
+                    Thank you for your order! Keep your order reference safe for tracking.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button
