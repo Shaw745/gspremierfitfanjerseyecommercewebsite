@@ -492,7 +492,25 @@ const CheckoutPage = () => {
                         onClick={() => window.location.href = orderResult.payment_info.authorization_url}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                       >
-                        Proceed to Payment
+                        <CreditCard className="w-4 h-4 mr-2" />
+                        Pay with Card Now
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Paystack - No Authorization URL (API key issue) */}
+                  {orderResult.payment_method === 'paystack' && !orderResult.payment_info?.authorization_url && !orderResult.payment_info?.error && (
+                    <div className="bg-yellow-50 border border-yellow-200 p-6 mb-6 rounded" data-testid="paystack-pending">
+                      <h3 className="font-semibold text-yellow-700 mb-2">Card Payment Processing</h3>
+                      <p className="text-yellow-600 mb-4">
+                        Card payment is being set up. If you're not redirected automatically, please choose bank transfer.
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={() => setStep(2)}
+                        className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                      >
+                        Choose Another Payment Method
                       </Button>
                     </div>
                   )}
