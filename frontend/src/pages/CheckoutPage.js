@@ -112,12 +112,59 @@ const CheckoutPage = () => {
     }
   };
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    // Nigerian phone number: +234 or 0 followed by 10 digits
+    const phoneRegex = /^(\+234|0)[0-9]{10}$/;
+    // Also allow international format
+    const intlRegex = /^\+[0-9]{10,15}$/;
+    return phoneRegex.test(phone.replace(/\s/g, '')) || intlRegex.test(phone.replace(/\s/g, ''));
+  };
+
   const handleShippingSubmit = (e) => {
     e.preventDefault();
-    if (!shippingForm.full_name || !shippingForm.email || !shippingForm.phone || !shippingForm.address || !shippingForm.city || !shippingForm.state) {
-      toast.error('Please fill in all required fields');
+    const errors = {};
+
+    // Validate required fields
+    if (!shippingForm.full_name.trim()) {
+      errors.full_name = 'Full name is required';
+    }
+
+    if (!shippingForm.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!validateEmail(shippingForm.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    if (!shippingForm.phone.trim()) {
+      errors.phone = 'Phone number is required';
+    } else if (!validatePhone(shippingForm.phone)) {
+      errors.phone = 'Please enter a valid phone number (e.g., +2348012345678 or 08012345678)';
+    }
+
+    if (!shippingForm.address.trim()) {
+      errors.address = 'Address is required';
+    }
+
+    if (!shippingForm.city.trim()) {
+      errors.city = 'City is required';
+    }
+
+    if (!shippingForm.state.trim()) {
+      errors.state = 'State is required';
+    }
+
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      toast.error('Please fix the errors in the form');
       return;
     }
+
     setStep(2);
   };
 
