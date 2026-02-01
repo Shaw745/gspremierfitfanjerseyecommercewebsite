@@ -265,6 +265,94 @@ async def send_order_confirmation_email(order: dict, user_email: str):
     except Exception as e:
         logger.error(f"Failed to send order email: {str(e)}")
 
+async def send_admin_new_order_notification(order: dict):
+    """Send new order notification email to admin"""
+    if not RESEND_API_KEY or not ADMIN_EMAIL:
+        logger.warning("Resend API key or Admin email not configured, skipping admin notification")
+        return
+    
+    items_html = ""
+    for item in order.get("items", []):
+        items_html += f"""
+        <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('product_name', 'Product')}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('size', '-')} / {item.get('color', '-')}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('quantity', 1)}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">₦{item.get('item_total', 0):,.0f}</td>
+        </tr>
+        """
+    
+    shipping = order.get('shipping_address', {})
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff;">
+        <div style="background: #050505; padding: 30px; text-align: center;">
+            <h1 style="color: #CCFF00; margin: 0; font-size: 24px;">🛒 NEW ORDER RECEIVED!</h1>
+        </div>
+        <div style="padding: 30px;">
+            <div style="background: #CCFF00; padding: 15px; margin-bottom: 20px; text-align: center;">
+                <h2 style="color: #050505; margin: 0;">New Order Alert</h2>
+            </div>
+            
+            <div style="background: #f9f9f9; padding: 15px; margin: 20px 0; border-left: 4px solid #CCFF00;">
+                <p style="margin: 0;"><strong>Order Reference:</strong> {order.get('reference', 'N/A')}</p>
+                <p style="margin: 5px 0 0;"><strong>Customer Email:</strong> {order.get('user_email', 'N/A')}</p>
+                <p style="margin: 5px 0 0;"><strong>Payment Method:</strong> {order.get('payment_method', 'N/A').upper()}</p>
+                <p style="margin: 5px 0 0;"><strong>Order Time:</strong> {order.get('created_at', 'N/A')}</p>
+            </div>
+            
+            <h3 style="color: #050505; border-bottom: 2px solid #CCFF00; padding-bottom: 10px;">Order Items</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <thead>
+                    <tr style="background: #050505; color: #fff;">
+                        <th style="padding: 10px; text-align: left;">Product</th>
+                        <th style="padding: 10px; text-align: left;">Size/Color</th>
+                        <th style="padding: 10px; text-align: left;">Qty</th>
+                        <th style="padding: 10px; text-align: left;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items_html}
+                </tbody>
+            </table>
+            
+            <div style="text-align: right; margin-top: 20px; padding: 15px; background: #050505;">
+                <p style="font-size: 24px; font-weight: bold; color: #CCFF00; margin: 0;">Total: ₦{order.get('total', 0):,.0f}</p>
+            </div>
+            
+            <h3 style="color: #050505; border-bottom: 2px solid #CCFF00; padding-bottom: 10px; margin-top: 30px;">Shipping Details</h3>
+            <div style="padding: 15px; background: #f9f9f9;">
+                <p style="margin: 0; color: #333;">
+                    <strong>{shipping.get('full_name', '')}</strong><br>
+                    {shipping.get('address', '')}<br>
+                    {shipping.get('city', '')}, {shipping.get('state', '')}<br>
+                    {shipping.get('country', 'Nigeria')}<br>
+                    <strong>Phone:</strong> {shipping.get('phone', 'N/A')}
+                </p>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <p style="color: #666;">Login to your admin dashboard to process this order.</p>
+            </div>
+        </div>
+        <div style="background: #050505; padding: 20px; text-align: center;">
+            <p style="color: #999; margin: 0; font-size: 12px;">© 2024 Gs Premier Fit Fan Admin Notification</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [ADMIN_EMAIL],
+            "subject": f"🛒 New Order - {order.get('reference', 'N/A')} - ₦{order.get('total', 0):,.0f}",
+            "html": html_content
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Admin notification email sent for order {order.get('reference')}")
+    except Exception as e:
+        logger.error(f"Failed to send admin notification email: {str(e)}")
+
 async def send_shipping_update_email(order: dict, user_email: str, tracking_info: dict):
     """Send shipping update email to customer"""
     if not RESEND_API_KEY:
