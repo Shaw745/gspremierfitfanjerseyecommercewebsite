@@ -93,11 +93,29 @@ const AdminOrders = () => {
     }
   };
 
+  const handleConfirmPayment = async (orderId) => {
+    try {
+      setConfirmingPayment(orderId);
+      await axios.post(`${API_URL}/admin/orders/${orderId}/confirm-payment`);
+      toast.success('Payment confirmed! Customer has been notified via email.');
+      fetchOrders();
+      if (selectedOrder?.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, payment_status: 'paid', status: 'processing' });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to confirm payment');
+    } finally {
+      setConfirmingPayment(null);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800';
+      case 'processing': return 'bg-blue-100 text-blue-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'shipped': return 'bg-blue-100 text-blue-800';
+      case 'pending_payment': return 'bg-orange-100 text-orange-800';
+      case 'shipped': return 'bg-indigo-100 text-indigo-800';
       case 'out_for_delivery': return 'bg-purple-100 text-purple-800';
       case 'delivered': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
