@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class GsPremierFitFanAPITester:
-    def __init__(self, base_url="https://kit-masters-3.preview.emergentagent.com"):
+    def __init__(self, base_url="https://athletic-store-89.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.admin_token = None
