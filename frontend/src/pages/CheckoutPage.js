@@ -511,10 +511,17 @@ const CheckoutPage = () => {
                       size="lg"
                       className="flex-1 bg-[#050505] hover:bg-[#1a1a1a] text-white font-semibold uppercase tracking-wider"
                       onClick={handlePaymentSubmit}
-                      disabled={loading}
+                      disabled={loading || processingOrder}
                       data-testid="place-order-btn"
                     >
-                      {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Place Order'}
+                      {loading || processingOrder ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                          Processing...
+                        </>
+                      ) : (
+                        'Place Order'
+                      )}
                     </Button>
                   </div>
                 </motion.div>
