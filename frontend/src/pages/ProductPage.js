@@ -160,7 +160,8 @@ const ProductPage = () => {
       toast.error('Please select a size');
       return;
     }
-    if (!selectedColor) {
+    // Only require color selection if the product has colors
+    if (product.colors?.length > 0 && !selectedColor) {
       toast.error('Please select a color');
       return;
     }
@@ -171,7 +172,7 @@ const ProductPage = () => {
 
     setAddingToCart(true);
     try {
-      await addToCart(product.id, quantity, selectedSize, selectedColor);
+      await addToCart(product.id, quantity, selectedSize, selectedColor || 'N/A');
       toast.success('Added to cart!');
     } catch (error) {
       toast.error('Failed to add to cart');
