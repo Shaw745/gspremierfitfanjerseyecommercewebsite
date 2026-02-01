@@ -207,10 +207,19 @@ const CheckoutPage = () => {
     setTimeout(() => setCopied(''), 2000);
   };
 
-  const handleConfirmPayment = () => {
-    toast.success('Payment confirmation submitted! We will verify and process your order.');
-    setStep(4);
+  const [confirmingPayment, setConfirmingPayment] = useState(false);
+
+  const handleConfirmPayment = async () => {
+    setConfirmingPayment(true);
+    
+    // Simulate submission delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Show pending confirmation - admin will verify
+    toast.success('Payment confirmation submitted! We will verify and update your order status.');
     clearCart();
+    setStep(4);
+    setConfirmingPayment(false);
   };
 
   const getCryptoAmount = (ngn, crypto) => {
