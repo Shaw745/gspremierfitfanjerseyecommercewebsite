@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, getImageUrl } from '../lib/utils';
 
 const ProductCard = ({ product, index = 0 }) => {
   return (
@@ -18,9 +18,12 @@ const ProductCard = ({ product, index = 0 }) => {
         {/* Image Container */}
         <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 mb-4">
           <img
-            src={product.images?.[0] || 'https://via.placeholder.com/400x500'}
+            src={getImageUrl(product.images?.[0])}
             alt={product.name}
             className="w-full h-full object-cover image-zoom"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/400x500?text=No+Image';
+            }}
           />
           {/* Overlay on hover */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
