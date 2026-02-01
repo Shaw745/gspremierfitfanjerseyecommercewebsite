@@ -283,9 +283,12 @@ const AdminProducts = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 bg-neutral-100 rounded overflow-hidden">
                         <img
-                          src={product.images?.[0] || 'https://via.placeholder.com/100'}
+                          src={getImageUrl(product.images?.[0])}
                           alt={product.name}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/100?text=No+Image';
+                          }}
                         />
                       </div>
                       <div>
