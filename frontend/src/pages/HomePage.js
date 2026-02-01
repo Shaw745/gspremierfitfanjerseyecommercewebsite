@@ -13,38 +13,38 @@ import { API_URL } from '../lib/utils';
 const SPORTS_VIDEOS = [
   {
     id: 1,
-    title: "Benevento GK Alberto Brignoli scores vs Real Madrid",
-    description: "Historic moment: Goalkeeper scores header in 95th minute!",
-    youtubeId: "jKPEDmcYlvY",
-    thumbnail: "https://img.youtube.com/vi/jKPEDmcYlvY/maxresdefault.jpg"
+    title: "Benevento GK Brignoli Scores vs AC Milan",
+    description: "Historic 95th minute header - Goalkeeper scores to earn first Serie A point!",
+    youtubeId: "uYS1rmDVptg",
+    thumbnail: "https://img.youtube.com/vi/uYS1rmDVptg/maxresdefault.jpg"
   },
   {
     id: 2,
     title: "Cristiano Ronaldo - Bicycle Kick vs Juventus",
     description: "One of the greatest goals in Champions League history",
-    youtubeId: "3O-gT4oVq1g",
-    thumbnail: "https://img.youtube.com/vi/3O-gT4oVq1g/maxresdefault.jpg"
+    youtubeId: "eUcJNLguPn0",
+    thumbnail: "https://img.youtube.com/vi/eUcJNLguPn0/maxresdefault.jpg"
   },
   {
     id: 3,
-    title: "Messi's Solo Goal vs Getafe",
-    description: "Maradona-like run from halfway line",
-    youtubeId: "5VMil0kiVaw",
-    thumbnail: "https://img.youtube.com/vi/5VMil0kiVaw/maxresdefault.jpg"
+    title: "Messi's Best Goals Compilation",
+    description: "The GOAT's most magical moments",
+    youtubeId: "V9Cg90kzYmc",
+    thumbnail: "https://img.youtube.com/vi/V9Cg90kzYmc/maxresdefault.jpg"
   },
   {
     id: 4,
-    title: "LeBron James - The Block",
-    description: "2016 NBA Finals Game 7 chase-down block",
+    title: "LeBron James - The Block in Game 7",
+    description: "2016 NBA Finals iconic chase-down block",
     youtubeId: "wgVOgGLtPtc",
     thumbnail: "https://img.youtube.com/vi/wgVOgGLtPtc/maxresdefault.jpg"
   },
   {
     id: 5,
-    title: "Usain Bolt - 100m World Record",
-    description: "9.58 seconds - The fastest man ever",
-    youtubeId: "3nbjhpcZ9_g",
-    thumbnail: "https://img.youtube.com/vi/3nbjhpcZ9_g/maxresdefault.jpg"
+    title: "Manchester City vs QPR - Aguerooo!",
+    description: "The most dramatic Premier League title win ever",
+    youtubeId: "81bv_gF4j5k",
+    thumbnail: "https://img.youtube.com/vi/81bv_gF4j5k/maxresdefault.jpg"
   }
 ];
 
