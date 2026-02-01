@@ -831,9 +831,16 @@ async def create_order(order_data: OrderCreate, current_user: dict = Depends(get
                         "access_code": paystack_data["data"]["access_code"],
                         "reference": reference
                     }
+                else:
+                    # Paystack returned an error (e.g., invalid key)
+                    logger.error(f"Paystack init failed: {paystack_data}")
+                    payment_info = {
+                        "error": paystack_data.get("message", "Payment initialization failed"),
+                        "reference": reference
+                    }
         except Exception as e:
             logger.error(f"Paystack error: {e}")
-            payment_info = {"error": "Failed to initialize payment"}
+            payment_info = {"error": "Failed to initialize payment", "reference": reference}
     
     elif order_data.payment_method.startswith("crypto_"):
         crypto_type = order_data.payment_method.replace("crypto_", "")
