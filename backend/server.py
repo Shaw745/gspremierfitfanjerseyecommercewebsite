@@ -853,8 +853,11 @@ async def create_order(order_data: OrderCreate, current_user: dict = Depends(get
             "reference": reference
         }
     
-    # Send order confirmation email (non-blocking)
+    # Send order confirmation email to customer (non-blocking)
     asyncio.create_task(send_order_confirmation_email(order, current_user["email"]))
+    
+    # Send new order notification to admin (non-blocking)
+    asyncio.create_task(send_admin_new_order_notification(order))
     
     # Check and update inventory, send low stock alerts
     for item in order_data.items:
