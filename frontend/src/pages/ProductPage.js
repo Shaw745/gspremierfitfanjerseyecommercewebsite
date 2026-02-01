@@ -510,7 +510,9 @@ const ProductPage = () => {
                 <li>• Category: <span className="capitalize">{product.category}</span></li>
                 <li>• Sport: {product.sport}</li>
                 <li>• Available Sizes: {product.sizes?.join(', ')}</li>
-                <li>• Available Colors: {product.colors?.join(', ')}</li>
+                {product.colors?.length > 0 && (
+                  <li>• Available Colors: {product.colors.join(', ')}</li>
+                )}
                 {product.collection && <li>• Collection: {product.collection}</li>}
               </ul>
             </TabsContent>
