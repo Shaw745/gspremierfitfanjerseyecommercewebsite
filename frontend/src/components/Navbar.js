@@ -93,39 +93,38 @@ const Navbar = () => {
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12">
           <div className="flex items-center justify-between h-20">
-            {/* GS Symbol Only - No Text */}
+            {/* Premium GS Monogram Logo */}
             <Link to="/" className="flex items-center flex-shrink-0" data-testid="logo-link">
-              <svg 
-                width="28" 
-                height="28" 
-                viewBox="0 0 40 40" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-[#050505]"
-              >
-                <path 
-                  d="M20 0C8.954 0 0 8.954 0 20s8.954 20 20 20 20-8.954 20-20S31.046 0 20 0zm0 4c8.837 0 16 7.163 16 16s-7.163 16-16 16S4 28.837 4 20 11.163 4 20 4z" 
-                  fill="currentColor"
-                />
-                <path 
-                  d="M20 8c-6.627 0-12 5.373-12 12h4c0-4.418 3.582-8 8-8V8z" 
-                  fill="currentColor"
-                />
-                <path 
-                  d="M28 14v6h-6v4h10V14h-4z" 
-                  fill="#CCFF00"
-                />
-                <text 
-                  x="12" 
-                  y="27" 
-                  fontFamily="Arial Black, sans-serif" 
-                  fontSize="14" 
-                  fontWeight="900" 
-                  fill="currentColor"
+              <div className="relative w-10 h-10 flex items-center justify-center">
+                {/* Outer hexagon shape */}
+                <svg 
+                  width="40" 
+                  height="40" 
+                  viewBox="0 0 40 40" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  GS
-                </text>
-              </svg>
+                  {/* Main shape - angular/geometric */}
+                  <path 
+                    d="M20 2L36 11V29L20 38L4 29V11L20 2Z" 
+                    fill="#050505"
+                  />
+                  {/* GS Letters - bold and modern */}
+                  <text 
+                    x="50%" 
+                    y="54%" 
+                    dominantBaseline="middle" 
+                    textAnchor="middle"
+                    fontFamily="system-ui, -apple-system, sans-serif" 
+                    fontSize="13" 
+                    fontWeight="800" 
+                    fill="#CCFF00"
+                    letterSpacing="-0.5"
+                  >
+                    GS
+                  </text>
+                </svg>
+              </div>
             </Link>
 
             {/* Desktop Navigation - Center */}
